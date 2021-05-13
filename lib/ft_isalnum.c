@@ -1,33 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_isalnum.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/17 19:17:19 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/13 19:34:09 by tjuliean         ###   ########.fr       */
+/*   Created: 2020/11/11 14:13:54 by tjuliean          #+#    #+#             */
+/*   Updated: 2021/05/13 17:36:10 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ex_func.h"
-#include "env_func.h"
-#include <stdlib.h>
-
-int main (int argc, char **argv, char **env)
+int	ft_isalnum(int c)
 {
-	env = env_dup(env);
-	if (argc == 2)
-	{
-		ft_cd(argv[1]);
-	}
-	else if (argc == 3)
-	{
-		ft_export(argv[1], &env);
-		ft_env((const char **)env);
-	}
-	else
-		ft_pwd();
-	free(env);
-	return (0);
+	return (ft_isalpha(c) || ft_isdigit(c));
 }

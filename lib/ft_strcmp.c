@@ -1,33 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/17 19:17:19 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/13 19:34:09 by tjuliean         ###   ########.fr       */
+/*   Created: 2021/05/13 19:17:20 by tjuliean          #+#    #+#             */
+/*   Updated: 2021/05/13 19:20:25 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ex_func.h"
-#include "env_func.h"
 #include <stdlib.h>
 
-int main (int argc, char **argv, char **env)
+int	ft_strcmp(const char *str1, const char *str2)
 {
-	env = env_dup(env);
-	if (argc == 2)
-	{
-		ft_cd(argv[1]);
-	}
-	else if (argc == 3)
-	{
-		ft_export(argv[1], &env);
-		ft_env((const char **)env);
-	}
-	else
-		ft_pwd();
-	free(env);
-	return (0);
+	size_t	i;
+
+	i = 0;
+	while (str1[i] == str2[i] && str1[i])
+		i++;
+	return ((str1[i] - str2[i]));
 }
