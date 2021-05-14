@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 19:17:16 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/04/17 19:17:17 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/14 17:14:53 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	error_exit(const char *msg)
 	exit(EXIT_FAILURE);
 }
 
-void	success_exit()
+void	success_exit(int code)
 {
-	exit(EXIT_SUCCESS);
+	exit(code);
 }

@@ -2,6 +2,6 @@
 # define EXIT_H
 
 void	error_exit(const char *msg);
-void	success_exit();
+void	success_exit(int code);
 
 #endif
