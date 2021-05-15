@@ -1,33 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/17 19:17:19 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/13 19:34:09 by tjuliean         ###   ########.fr       */
+/*   Created: 2021/04/17 19:17:16 by tjuliean          #+#    #+#             */
+/*   Updated: 2021/05/14 17:39:36 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ex_func.h"
-#include "env_func.h"
 #include <stdlib.h>
+#include <stdio.h>
 
-int main (int argc, char **argv, char **env)
+void	error_exit(const char *msg)
 {
-	env = env_dup(env);
-	if (argc == 2)
-	{
-		ft_cd(argv[1]);
-	}
-	else if (argc == 3)
-	{
-		ft_export(argv[1], &env);
-		ft_env((const char **)env);
-	}
-	else
-		ft_pwd();
-	free(env);
-	return (0);
+	perror(msg);
+	exit(EXIT_FAILURE);
+}
+
+void	success_exit(char code)
+{
+	exit(code);
 }

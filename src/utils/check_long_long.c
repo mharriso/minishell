@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   check_long_long.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 18:04:25 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/14 18:57:00 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/15 18:13:07 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
 #include <stdio.h>
+#include "libft.h"
 
 static int check_limit(char *str, int sign)
 {
@@ -75,14 +75,4 @@ long long ft_atoll(char *str, int *ok)
 		str++;
 	}
 	return (sign * number);
-}
-
-int main (int argc, char *argv[])
-{
-	int ok;
-	long long n;
-
-	n = ft_atoll("-9223372036854775808", &ok);
-	printf("n = %lld\nok = %d\n", n, ok);
-	return 0;
 }

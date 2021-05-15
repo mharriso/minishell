@@ -1,16 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/11 14:13:54 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/13 17:36:10 by tjuliean         ###   ########.fr       */
+/*   Created: 2021/04/17 20:16:29 by tjuliean          #+#    #+#             */
+/*   Updated: 2021/05/15 17:33:08 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_isalnum(int c)
+#include <stdio.h>
+#include "exit.h"
+
+void	ft_exit(char **argv)
 {
-	return (ft_isalpha(c) || ft_isdigit(c));
+	int			i;
+	long long	code;
+
+	printf("exit\n");
+	i = 0;
+	while (argv[i])
+		i++;
+	if (i > 1)
+		printf("exit: too many arguments\n");
+	else
+	{
+		i = 1; //ft_atoll(argv[0], &code);
+		code = 1;
+		if (i)
+			success_exit(((char)code));
+		else
+			printf("exit: %s: numeric argument required\n", argv[0]);
+	}
 }

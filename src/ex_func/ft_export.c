@@ -6,16 +6,26 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 20:28:36 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/13 19:29:52 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/15 17:30:20 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "ftlib.h"
+#include "libft.h"
 #include "exit.h"
 #include "env_func.h"
 #include "ex_func.h"
+
+static void	print_env(char **env)
+{
+	while (*env)
+	{
+		printf("declare -x  %s\n", *env);
+		env++;
+	}
+
+}
 
 static char	**sort_env(char **env)
 {
@@ -69,7 +79,6 @@ static char	**fill_new_env(int len, char **env, char *new_str)
 static void	export(char *str, char ***env)
 {
 	int		len;
-	int		i;
 	char	*new_str;
 
 	len = 0;
@@ -102,7 +111,7 @@ void		ft_export(char **argv, char ***env)
 	if (!*argv)
 	{
 		temp = sort_env(*env);
-		ft_env(temp);
+		print_env(temp);
 	}
 	while (*argv)
 	{
@@ -112,7 +121,11 @@ void		ft_export(char **argv, char ***env)
 		name = env_getname(*argv);
 		res = env_name_check(name);
 		if (res)
-			export(*argv, env);
+		{
+			res = env_replace(*argv, env);
+			if (!res)
+				export(*argv, env);
+		}
 		else
 			printf("export: not an identifier: %s\n", name);
 		free(name);

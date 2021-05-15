@@ -1,23 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/17 20:36:46 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/04/17 20:37:03 by tjuliean         ###   ########.fr       */
+/*   Created: 2021/04/17 19:17:09 by tjuliean          #+#    #+#             */
+/*   Updated: 2021/05/14 18:12:17 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <unistd.h>
 #include <stdlib.h>
+#include "ex_func.h"
 
-size_t	ft_strlen(const char *str)
+void	ft_pwd(void)
 {
-	size_t	i;
+	char	*p;
 
-	i = 0;
-	while (str[i] != '\0')
-		i++;
-	return (i);
+	p = getcwd(NULL, PWD_BUFF);
+	if (!p)
+		write(1, "pwd: error\n", 12);
+	else
+	{
+		write(1, p, PWD_BUFF);
+		write(1, "\n", 1);
+		free(p);
+	}
 }

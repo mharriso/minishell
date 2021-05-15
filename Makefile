@@ -1,30 +1,29 @@
 NAME	=	minishell
 SRC		=	src
 EX_FUNC =	ex_func
-LIB		=	lib
+FT		=	libft
 INC		=	inc
+UTILS	=	utils
 
 HEADER	=	ex_func.h \
 			exit.h \
-			ftlib.h \
-			env_func.h
+			env_func.h\
+			libft.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
-SOURCE =	${EX_FUNC}/ft_pwd.c \
+SOURCES	=	${EX_FUNC}/ft_pwd.c \
 			${EX_FUNC}/ft_cd.c \
 			${EX_FUNC}/ft_env.c \
 			${EX_FUNC}/ft_export.c \
 			${EX_FUNC}/ft_exit.c \
+			${EX_FUNC}/ft_unset.c \
 			${EX_FUNC}/env_func.c \
-			${LIB}/ft_strlen.c \
-			${LIB}/ft_strdup.c \
-			${LIB}/ft_isalnum.c \
-			${LIB}/ft_isalpha.c \
-			${LIB}/ft_isdigit.c \
-			${LIB}/ft_strcmp.c \
+			${UTILS}/check_long_long.c \
 			exit.c \
 			minishell.c
+
+SOURCE	= $(addprefix $(SRC)/, $(SOURCES))
 
 FLAGS	= -Wall -Wextra -Werror
 
@@ -33,14 +32,17 @@ OBJECTS	= ${SOURCE:.c=.o}
 all: ${NAME}
 
 $(NAME): ${OBJECTS}
-	gcc -I ${INC} $(OBJECTS) -o $(NAME)
+	make bonus -C ${FT}
+	gcc -I ${INC} $(OBJECTS) -l ft -L ${FT} -o $(NAME)
 
 %.o: %.c ${HFILES}
 	gcc ${FLAGS} -I ${INC} -c $< -o $@
 
 clean:
+	make clean -C ${FT}
 	rm -f ${OBJECTS}
 fclean: clean
+	make fclean -C ${FT}
 	rm -f ${NAME}
 re: fclean all
 
