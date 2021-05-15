@@ -1,24 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_func.h                                         :+:      :+:    :+:   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/13 18:00:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/14 18:52:55 by tjuliean         ###   ########.fr       */
+/*   Created: 2021/04/17 20:16:29 by tjuliean          #+#    #+#             */
+/*   Updated: 2021/05/15 17:33:08 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ENV_FUNC_H
-# define ENV_FUNC_H
+#include <stdio.h>
+#include "exit.h"
 
-int		env_name_check(char *str);
-int		env_len(char **env);
-char	**env_dup(char **env);
-char	*env_getname(char *str);
-char	*env_getvalue(char *str);
-int		env_replace(const char *str, char ***env);
-int		env_index_byname(const char *name, const char **env);
+void	ft_exit(char **argv)
+{
+	int			i;
+	long long	code;
 
-#endif
+	printf("exit\n");
+	i = 0;
+	while (argv[i])
+		i++;
+	if (i > 1)
+		printf("exit: too many arguments\n");
+	else
+	{
+		i = 1; //ft_atoll(argv[0], &code);
+		code = 1;
+		if (i)
+			success_exit(((char)code));
+		else
+			printf("exit: %s: numeric argument required\n", argv[0]);
+	}
+}

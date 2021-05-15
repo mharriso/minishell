@@ -1,24 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_func.h                                         :+:      :+:    :+:   */
+/*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/13 18:00:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/14 18:52:55 by tjuliean         ###   ########.fr       */
+/*   Created: 2021/04/17 19:17:09 by tjuliean          #+#    #+#             */
+/*   Updated: 2021/05/14 18:12:17 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ENV_FUNC_H
-# define ENV_FUNC_H
+#include <unistd.h>
+#include <stdlib.h>
+#include "ex_func.h"
 
-int		env_name_check(char *str);
-int		env_len(char **env);
-char	**env_dup(char **env);
-char	*env_getname(char *str);
-char	*env_getvalue(char *str);
-int		env_replace(const char *str, char ***env);
-int		env_index_byname(const char *name, const char **env);
+void	ft_pwd(void)
+{
+	char	*p;
 
-#endif
+	p = getcwd(NULL, PWD_BUFF);
+	if (!p)
+		write(1, "pwd: error\n", 12);
+	else
+	{
+		write(1, p, PWD_BUFF);
+		write(1, "\n", 1);
+		free(p);
+	}
+}
