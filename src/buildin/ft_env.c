@@ -1,30 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/17 19:17:09 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/14 18:12:17 by tjuliean         ###   ########.fr       */
+/*   Created: 2021/04/17 19:34:48 by tjuliean          #+#    #+#             */
+/*   Updated: 2021/05/16 14:52:05 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include "ex_func.h"
+#include <stdio.h>
+#include "libft.h"
+#include "structs.h"
 
-void	ft_pwd(void)
+static void	print_env(void *v)
 {
-	char	*p;
+	t_env *env;
 
-	p = getcwd(NULL, PWD_BUFF);
-	if (!p)
-		write(1, "pwd: error\n", 12);
-	else
-	{
-		write(1, p, PWD_BUFF);
-		write(1, "\n", 1);
-		free(p);
-	}
+	env = (t_env*)v;
+	if (env->value)
+		printf("%s=%s\n", env->name, env->value);
+}
+
+void	ft_env(t_list *env)
+{
+	ft_lstiter(env, print_env);
 }

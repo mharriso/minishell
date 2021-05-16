@@ -1,35 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   s_main.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/17 19:17:19 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/16 14:18:50 by tjuliean         ###   ########.fr       */
+/*   Created: 2021/05/16 13:32:03 by tjuliean          #+#    #+#             */
+/*   Updated: 2021/05/16 14:54:15 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include "struct.h"
-#include "buildin.h"
+#include <stdio.h>
+#include "libft.h"
+#include "structs.h"
 #include "env_func.h"
+#include "buildin.h"
 
-
-int main (int argc, char **argv, char **env)
+int	main(int argc, char **argv, char **env)
 {
-	env = env_dup(env);
-	if (argc == 2)
-	{
-		ft_cd(argv[1]);
-	}
-	else if (argc == 3)
-	{
-		ft_export(argv + 1, &env);
-		ft_env((const char **)env);
-	}
-	else
-		ft_pwd();
-	free(env);
+	// v to test v
+	int c;
+	char **v;
+	c = argc;
+	v = argv;
+	// ^ to test ^
+
+	t_list	*lenv;
+
+	lenv = env_create(env);
+
+	ft_env(lenv);
+
+	ft_lstclear(&lenv, env_clear);
 	return (0);
 }
