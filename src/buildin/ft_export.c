@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 20:28:36 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/15 17:30:20 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/16 14:27:24 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "libft.h"
 #include "exit.h"
 #include "env_func.h"
-#include "ex_func.h"
+#include "buildin.h"
 
 static void	print_env(char **env)
 {

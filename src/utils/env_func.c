@@ -6,12 +6,15 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 17:58:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/15 17:38:02 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/16 15:17:27 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "libft.h"
+#include "structs.h"
+
+#include <stdio.h>
 
 char	*env_getname(char *str)
 {
@@ -106,20 +109,62 @@ int		env_index_byname(const char *name, const char **env)
 
 //}
 
-//return 1 if success
-int		env_replace(const char *str, char ***env)
+
+
+void	env_freecont(t_env *env)
 {
-	int		i;
+
+	free(env->name);
+	if (env->value)
+		free(env->value);
+}
+
+void	env_clear(void *v)
+{
+	env_freecont((t_env*)v);
+	free(v);
+}
+
+//return 1 if success
+int		env_replace(const char *str, t_list **env)
+{
 	char	*name;
+	t_list	*temp;
+	int		res;
 
 	name = env_getname((char*)str);
-	i = env_index_byname(name, (const char**)*env);
-	free(name);
-	if (i > -1)
+	temp = *env;
+	while (temp)
 	{
-		(*env)[i] = ft_strdup(str);
-		return (1);
+		res = ft_strcmp(name, ((t_env*)temp->content)->name);
+		if (!res)
+		{
+			env_freecont((t_env*)temp->content);
+			((t_env*)temp->content)->name = name;
+			((t_env*)temp->content)->value = env_getvalue((char*)str);
+			return (1);
+		}
+		temp = temp->next;
 	}
-	else
-		return (0);
+	free(name);
+	return (0);
+}
+
+t_list	*env_create(char **env)
+{
+	t_list	*list;
+	t_list	*node;
+	t_env	*content;
+
+	list = NULL;
+	while (*env)
+	{
+		content = (t_env*)malloc(sizeof(t_env));
+		content->name = env_getname(*env);
+		content->value = env_getvalue(*env);
+		node = ft_lstnew(content);
+		ft_lstadd_back(&list, node);
+		env++;
+	}
+	return (list);
 }
