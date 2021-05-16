@@ -14,15 +14,15 @@ HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
 
 SRC_UTILS	=	check_long_long.c \
-				exit.c
+				exit.c \
+				env_func.c
 
 SRC_EX_FUN	=	ft_pwd.c \
 				ft_cd.c \
 				ft_env.c \
 				ft_export.c \
 				ft_exit.c \
-				ft_unset.c \
-				env_func.c
+				ft_unset.c 
 
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(EX_FUNC)/, $(SRC_EX_FUN)) \
