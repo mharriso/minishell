@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/07 03:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2020/11/07 03:48:18 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/16 17:41:04 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	ft_lstiter(t_list *lst, void (*f)(void *))
 {
 	while (lst && f)
 	{
-		f((void *)lst->content);
+		f((void *)lst->data);
 		lst = lst->next;
 	}
 }

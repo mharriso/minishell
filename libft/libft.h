@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 01:34:10 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 21:57:08 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/16 17:40:26 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void			ft_putnbr_fd(int n, int fd);
 
 typedef struct	s_list
 {
-	void			*content;
+	void			*data;
 	struct s_list	*next;
 }				t_list;
 
