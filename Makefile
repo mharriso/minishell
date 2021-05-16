@@ -12,18 +12,24 @@ HEADER	=	ex_func.h \
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
-SOURCES	=	${EX_FUNC}/ft_pwd.c \
-			${EX_FUNC}/ft_cd.c \
-			${EX_FUNC}/ft_env.c \
-			${EX_FUNC}/ft_export.c \
-			${EX_FUNC}/ft_exit.c \
-			${EX_FUNC}/ft_unset.c \
-			${EX_FUNC}/env_func.c \
-			${UTILS}/check_long_long.c \
-			exit.c \
-			minishell.c
 
-SOURCE	= $(addprefix $(SRC)/, $(SOURCES))
+SRC_UTILS	=	check_long_long.c \
+				exit.c
+
+SRC_EX_FUN	=	ft_pwd.c \
+				ft_cd.c \
+				ft_env.c \
+				ft_export.c \
+				ft_exit.c \
+				ft_unset.c \
+				env_func.c
+
+SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
+			$(addprefix $(EX_FUNC)/, $(SRC_EX_FUN)) \
+
+SOURCES	= $(addprefix $(SRC)/, $(SRC_F))
+
+SOURCE = ${SOURCES} ${SRC}/minishell.c
 
 FLAGS	= -Wall -Wextra -Werror
 
