@@ -10,7 +10,8 @@ HEADER	=	buildin.h \
 			exit.h \
 			env_func.h\
 			libft.h \
-			structs.h
+			structs.h \
+			parser.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
@@ -26,6 +27,7 @@ SRC_BUILDIN	=	ft_pwd.c \
 				ft_unset.c
 
 SRC_PARSER	=	parser.c
+				parser_utils.c
 
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(BUILDIN)/, $(SRC_BUILDIN)) \
