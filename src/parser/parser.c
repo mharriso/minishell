@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parcer.c                                           :+:      :+:    :+:   */
+/*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/15 20:37:14 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/15 20:38:00 by mharriso         ###   ########.fr       */
+/*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
+/*   Updated: 2021/05/15 20:48:45 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include "libft.h"
 
-int main (int argc, char *argv[])
+int	main (int argc, char *argv[])
 {
-   return 0;
+	return (0);
 }
