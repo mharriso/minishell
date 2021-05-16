@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 18:00:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/16 14:33:27 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/16 16:58:06 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,7 @@ int		env_replace(const char *str, char ***env);
 int		env_index_byname(const char *name, const char **env);
 t_list	*env_create(char **env);
 void	env_clear(void *v);
+char	*e_name(t_list *env);
+char	*e_value(t_list *env);
 
 #endif

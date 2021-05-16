@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 17:58:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/16 15:17:27 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/16 17:36:11 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,16 @@
 #include "structs.h"
 
 #include <stdio.h>
+
+char	*e_name(t_list *env)
+{
+	return ((t_env*)env->content)->name;
+}
+
+char	*e_value(t_list *env)
+{
+	return ((t_env*)env->content)->value;
+}
 
 char	*env_getname(char *str)
 {
@@ -47,71 +57,15 @@ int		env_name_check(char *str)
 	int		res;
 
 	res = ft_isalpha(*str) || *str == '_';
-	while (str++ && res)
+	while (*str != '\0' && res)
+	{
 		res = ft_isalnum(*str) || *str == '_';
+		str++;
+	}
 	return (res);
 }
 
-int		env_len(char **env)
-{
-	int len;
-
-	len = 0;
-	while (*env)
-	{
-		len++;
-		env++;
-	}
-	return (len);
-}
-
-char	**env_dup(char **env)
-{
-	int		len;
-	char	**new_env;
-	char	**begin;
-
-	len = env_len(env);
-	new_env = (char**)malloc(sizeof(char*) * (len + 1));
-	begin = new_env;
-	while (*env)
-	{
-		*new_env = ft_strdup(*env);
-		env++;
-		new_env++;
-	}
-	*new_env = NULL;
-	return (begin);
-}
-
-//return -1 if env hasn't name
-int		env_index_byname(const char *name, const char **env)
-{
-	int		i;
-	int		res;
-	char	*env_name;
-
-	i = 0;
-	while (env[i])
-	{
-		env_name = env_getname((char*)env[i]);
-		res = ft_strcmp(name, env_name);
-		free(env_name);
-		if (!res)
-			return (i);
-		i++;
-	}
-	return (-1);
-}
-
-//char	*env_getval_byname(const char *name, const char **env)
-//{
-
-//}
-
-
-
-void	env_freecont(t_env *env)
+static void	env_freecont(t_env *env)
 {
 
 	free(env->name);
@@ -126,7 +80,7 @@ void	env_clear(void *v)
 }
 
 //return 1 if success
-int		env_replace(const char *str, t_list **env)
+int	env_replace(const char *str, t_list **env)
 {
 	char	*name;
 	t_list	*temp;
