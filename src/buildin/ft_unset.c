@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 21:23:41 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/16 17:30:50 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/17 19:46:49 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	ft_unset(char **argv, t_list **env)
 
 	t_list *t;
 	t = *env;
-
 	if (!*argv)
 	{
 		printf("unset: not enough arguments\n");
@@ -61,11 +60,7 @@ void	ft_unset(char **argv, t_list **env)
 		if (!is_suit)
 			printf("unset: %s: invalid parameter name\n", *argv);
 		else
-		{
 			res = remove_env(*argv, env);
-			if (res)
-				break ;
-		}
 		argv++;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 13:32:03 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/16 18:25:10 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/17 19:42:16 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,22 @@ int	main(int argc, char **argv, char **env)
 	// 	ft_unset(arg, &lenv);
 	// 	ft_env(lenv);
 	// }
+	arg = fill_arg(argc, argv);
+	ft_unset(arg, &lenv);
 
-	if (argc > 1)
-	{
-		arg = fill_arg(argc, argv);
-		ft_exit(arg);
-		// ft_unset(arg, &lenv);
-		// ft_env(lenv);
-		free(arg);
-	}
+	// char *a;
+	// a = malloc(3);
+	// a[0] = '.';
+	// a[1] = '.';
+	// a[2] = '\0';
+
+	// ft_cd(&a ,&lenv);
+
+	ft_env(lenv);
+	//ft_pwd();
+
+	//free(a);
+	free(arg);
 
 	ft_lstclear(&lenv, env_clear);
 	return (0);

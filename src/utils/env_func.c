@@ -6,13 +6,14 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 17:58:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/16 17:36:11 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/17 20:46:02 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "libft.h"
 #include "structs.h"
+#include "exit.h"
 
 #include <stdio.h>
 
@@ -32,10 +33,14 @@ char	*env_getname(char *str)
 	char	*name;
 
 	begin = str;
-	while (*str != '=')
+	while (*str != '=' && *str != '\0')
 		str++;
+	if (*str == '\0')
+		return (NULL);
 	*str = '\0';
 	name = ft_strdup(begin);
+	if (!name)
+		error_exit("env_getname");
 	*str = '=';
 	return (name);
 }
@@ -44,12 +49,32 @@ char	*env_getvalue(char *str)
 {
 	char	*value;
 
-	while (*str != '=')
+	while (*str != '=' && *str != '\0')
 		str++;
+	if (*str == '\0')
+		return (NULL);
 	*str = '\0';
 	value = ft_strdup(str + 1);
+	if (!value)
+		error_exit("env_getnvalue");
 	*str = '=';
 	return (value);
+}
+
+char	*env_getvaluebyname(const char *name, t_list *env)
+{
+	char	*env_name;
+	int		res;
+
+	while (env)
+	{
+		env_name = e_name(env);
+		res = ft_strcmp(name, env_name);
+		if (!res)
+			return (e_value(env));
+		env = env->next;
+	}
+	return (NULL);
 }
 
 int		env_name_check(char *str)
@@ -80,13 +105,11 @@ void	env_clear(void *v)
 }
 
 //return 1 if success
-int	env_replace(const char *str, t_list **env)
+int	env_replace(const char *name, const char *value, t_list **env)
 {
-	char	*name;
 	t_list	*temp;
 	int		res;
 
-	name = env_getname((char*)str);
 	temp = *env;
 	while (temp)
 	{
@@ -94,13 +117,14 @@ int	env_replace(const char *str, t_list **env)
 		if (!res)
 		{
 			env_freecont((t_env*)temp->content);
-			((t_env*)temp->content)->name = name;
-			((t_env*)temp->content)->value = env_getvalue((char*)str);
+			((t_env*)temp->content)->name = ft_strdup(name);
+			((t_env*)temp->content)->value = ft_strdup(value);
+			if (!((t_env*)temp->content)->name || !((t_env*)temp->content)->value)
+				error_exit("env_replace");
 			return (1);
 		}
 		temp = temp->next;
 	}
-	free(name);
 	return (0);
 }
 
@@ -109,16 +133,123 @@ t_list	*env_create(char **env)
 	t_list	*list;
 	t_list	*node;
 	t_env	*content;
+	int		res;
 
 	list = NULL;
 	while (*env)
 	{
 		content = (t_env*)malloc(sizeof(t_env));
 		content->name = env_getname(*env);
-		content->value = env_getvalue(*env);
+		res = ft_strcmp("OLDPWD", content->name);
+		if (res)
+			content->value = env_getvalue(*env);
+		else
+			content->value = NULL;
 		node = ft_lstnew(content);
 		ft_lstadd_back(&list, node);
 		env++;
 	}
 	return (list);
+}
+
+static char	*str_env(char *name, char *value)
+{
+	size_t	i;
+	char	*str;
+
+	i = ft_strlen(name);
+	i += ft_strlen(value);
+	str = malloc(i + 2);
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (*name)
+	{
+		str[i] = *name;
+		name++;
+		i++;
+	}
+	str[i++] = '=';
+	while (*value)
+	{
+		str[i] = *value;
+		value++;
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
+}
+
+char	**env_listtoarr(t_list *env)
+{
+	char	**new_env;
+	char	*value;
+	char	*name;
+	size_t	i;
+
+	i = ft_lstsize(env);
+	new_env = (char**)malloc(sizeof(char*) * (i + 1));
+	if (!new_env)
+		error_exit("env_listtoarr\n");
+	i = 0;
+	while (env)
+	{
+		name = e_name(env);
+		value = e_value(env);
+		if (value)
+			new_env[i] = str_env(name, value);
+		else
+			new_env[i] = ft_strdup(name);
+		if (!new_env[i])
+			error_exit("env_listtoarr\n");
+		i++;
+		env = env->next;
+	}
+	new_env[i] = NULL;
+	return (new_env);
+}
+
+static int	lstsize_wo_v(t_list *lst)
+{
+	int		i;
+	char	*value;
+
+	i = 0;
+	while (lst)
+	{
+		lst = lst->next;
+		value = e_value(lst);
+		if (value)
+			i++;
+	}
+	return (i);
+}
+
+char	**env_listtoarr_to_new(t_list *env)
+{
+	char	**new_env;
+	char	*value;
+	char	*name;
+	size_t	i;
+
+	i = lstsize_wo_v(env);
+	new_env = (char**)malloc(sizeof(char*) * (i + 1));
+	if (!new_env)
+		error_exit("env_listtoarr\n");
+	i = 0;
+	while (env)
+	{
+		name = e_name(env);
+		value = e_value(env);
+		if (value)
+		{
+			new_env[i] = str_env(name, value);
+			if (!new_env[i])
+				error_exit("env_listtoarr\n");
+			i++;
+		}
+		env = env->next;
+	}
+	new_env[i] = NULL;
+	return (new_env);
 }

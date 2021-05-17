@@ -1,29 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_func.h                                         :+:      :+:    :+:   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/13 18:00:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/17 17:38:15 by tjuliean         ###   ########.fr       */
+/*   Created: 2021/05/17 19:53:05 by tjuliean          #+#    #+#             */
+/*   Updated: 2021/05/17 19:59:41 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ENV_FUNC_H
-# define ENV_FUNC_H
-
+#include <stdio.h>
 #include "libft.h"
 
-int		env_name_check(char *str);
-char	*env_getname(char *str);
-char	*env_getvalue(char *str);
-int		env_replace(const char *name, const char *value, t_list **env);
-t_list	*env_create(char **env);
-void	env_clear(void *v);
-char	*e_name(t_list *env);
-char	*e_value(t_list *env);
-char	**env_listtoarr(t_list *env);
-char	*env_getvaluebyname(const char *name, t_list *env);
+void	ft_echo(char **argv)
+{
+	int		n;
+	int		i;
 
-#endif
+	n = 0;
+	i = 0;
+	while(argv[i] && argv[i][0] == '-' && argv[i][1] == 'n')
+	{
+		n++;
+		i++;
+	}
+	while (argv[i])
+	{
+		printf("%s", argv[i]);
+		i++;
+	}
+	if (!n)
+		printf("\n");
+}
