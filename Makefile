@@ -10,7 +10,8 @@ HEADER	=	buildin.h \
 			exit.h \
 			env_func.h\
 			libft.h \
-			structs.h
+			structs.h \
+			utils.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
@@ -29,7 +30,7 @@ SRC_PARSER	=	parser.c
 
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(BUILDIN)/, $(SRC_BUILDIN)) \
-			$(addprefix $(PARSER)/, $(SRC_PARSER))
+			#$(addprefix $(PARSER)/, $(SRC_PARSER))
 
 SOURCES	= $(addprefix $(SRC)/, $(SRC_F))
 

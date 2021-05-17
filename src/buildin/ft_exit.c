@@ -6,13 +6,15 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 20:16:29 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/15 17:33:08 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/16 18:18:58 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "exit.h"
+#include "utils.h"
 
+//argv must be null terminated
 void	ft_exit(char **argv)
 {
 	int			i;
@@ -20,14 +22,15 @@ void	ft_exit(char **argv)
 
 	printf("exit\n");
 	i = 0;
-	while (argv[i])
+	while (argv[i] && i < 2)
 		i++;
-	if (i > 1)
+	if (i == 0)
+		success_exit(0);
+	else if (i > 1)
 		printf("exit: too many arguments\n");
 	else
 	{
-		i = 1; //ft_atoll(argv[0], &code);
-		code = 1;
+		code = ft_atoll(argv[0], &i);
 		if (i)
 			success_exit(((char)code));
 		else
