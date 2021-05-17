@@ -26,7 +26,7 @@ SRC_BUILDIN	=	ft_pwd.c \
 				ft_exit.c \
 				ft_unset.c
 
-SRC_PARSER	=	parser.c
+SRC_PARSER	=	parser.c \
 				parser_utils.c
 
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
