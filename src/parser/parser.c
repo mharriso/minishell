@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/17 18:08:27 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/18 14:40:00 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,89 +14,102 @@
 #include <stdlib.h>
 #include "libft.h"
 #include "exit.h"
-#define NORMAL 1
-#define IN_QUOTES 2
-#define IN_DQUOTES 3
+#include "parser.h"
+#include <string.h> //delete
 
-typedef struct s_parse
+void	finish_redirect(t_token **tokens, t_parse *parse, char c)
 {
-	char	*line;
-	int		status;
-	int		index;
-	int		len;
-}				t_parse;
-
-typedef struct	s_token
-{
-	char			*data;
-	int				type;
-	int				index;
-	struct s_token	*next;
-}				t_token;
-
-void	create_new_token(t_token **tokens, int len)
-{
-	t_token *new;
-
-	new = (t_token *)malloc(sizeof(t_token));
-	if (new)
-		new->data = ft_calloc(len + 1, 1);
-	if(!new || !new->data)
-		error_exit("malloc error");
-	new->type = 0;
-	new->index = 0;
-
-	new->next = *tokens;
-	*tokens = new;
-}
-
-int	lstsize(t_token *lst)
-{
-	int i;
-
-	i = 0;
-	while (lst)
-	{
-		lst = lst->next;
-		i++;
-	}
-	return (i);
+	if (c != '>' && (*tokens)->type == R_REDIRECT)
+		create_new_token(tokens, parse->len);
 }
 
 void	parse_normal(t_token **tokens, t_parse *parse, char c)
 {
+	finish_redirect(tokens, parse, c);
 	if (c == '\"')
 		parse->status = IN_DQUOTES;
 	else if (c == '\'')
 		parse->status = IN_QUOTES;
-	else if (c == ' ' || c == '\t')
+	else if (c == '>' && (*tokens)->type == R_REDIRECT)
 	{
-		printf("Normal\n");
+		(*tokens)->type = DR_REDIRECT;
+		(*tokens)->data[(*tokens)->index++] = c;
+		create_new_token(tokens, parse->len);
+	}
+	else if (c == '>')
+	{
+		create_new_token(tokens, parse->len);
+		(*tokens)->type = R_REDIRECT;
+		(*tokens)->data[(*tokens)->index++] = c;
+	}
+	else if (c == '<')
+	{
+		create_new_token(tokens, parse->len);
+		(*tokens)->type = L_REDIRECT;
+		(*tokens)->data[(*tokens)->index++] = c;
+		create_new_token(tokens, parse->len);
+	}
+	else if (c == ' ' || c == '\t')
+		create_new_token(tokens, parse->len);
+	else if (c == '|')
+	{
+		create_new_token(tokens, parse->len);
+		(*tokens)->type = PIPE;
+		(*tokens)->data[(*tokens)->index++] = c;
 		create_new_token(tokens, parse->len);
 	}
 	else
+	{
+		(*tokens)->type = TEXT;
 		(*tokens)->data[(*tokens)->index++] = c;
+	}
 }
 
-// void	parse_in_quotes(t_token *tokens, t_parse *parse, char c)
-// {
-// 	if (c == '\'')
-// 		parse->status = NORMAL;
-// }
-
-// void	parse_in_dquotes(t_token *tokens, t_parse *parse, char c)
-// {
-// 	if (c == '\"')
-// 		parse->status = NORMAL;
-// }
-void	parse_init(t_parse *parse, char *line)
+void	parse_in_quotes(t_token **tokens, t_parse *parse, char c)
 {
-	parse->line = line;
-	parse->status = NORMAL;
-	parse->index = 0;
-	parse->len = ft_strlen(line) + 1;
+	if (c == '\'')
+	{
+		create_new_token(tokens, parse->len);
+		parse->status = NORMAL;
+	}
+	else
+	{
+		(*tokens)->type = TEXT;
+		(*tokens)->data[(*tokens)->index++] = c;
+	}
 }
 
+void	parse_in_dquotes(t_token **tokens, t_parse *parse, char c)
+{
+	if (c == '\"')
+	{
+		create_new_token(tokens, parse->len);
+		parse->status = NORMAL;
+	}
+	else
+	{
+		(*tokens)->type = TEXT;
+		(*tokens)->data[(*tokens)->index++] = c;
+	}
+}
+
+char *type(int type)
+{
+	if(type == EMPTY)
+		return strdup("EMPTY");
+	else if(type == TEXT)
+		return strdup("TEXT");
+	else if(type == R_REDIRECT)
+		return strdup("R_REDIRECT");
+	else if(type == DR_REDIRECT)
+		return strdup("DR_REDIRECT");
+	else if(type == L_REDIRECT)
+		return strdup("L_REDIRECT");
+	else if(type == PIPE)
+		return strdup("PIPE");
+	else
+		return strdup("ERROR TYPE");
+}
 
 char		**create_array(t_token **head, int size)
 {
@@ -110,6 +123,7 @@ char		**create_array(t_token **head, int size)
 	while (tmp)
 	{
 		size--;
+		printf("%-11s:  %s\n", type(tmp->type), tmp->data);
 		if (!(arr[size] = malloc(tmp->index + 1)))
 			error_exit("malloc error");
 		ft_memcpy(arr[size], tmp->data, tmp->index);
@@ -126,18 +140,18 @@ char	**parser(char *line)
 
 	tokens = NULL;
 	parse_init(&parse, line);
-	create_new_token(&tokens, parse.len);
+	start_tokens(&tokens, parse.len);
 	while (parse.line[parse.index])
 	{
 		if (parse.status == NORMAL)
 			parse_normal(&tokens, &parse, parse.line[parse.index]);
-		// else if (parse.status == IN_QUOTES)
-		// 	parse_in_quotes(tokens, &parse, parse.line[parse.index]);
-		// else if (parse.status == IN_DQUOTES)
-		// 	parse_in_dquotes(tokens, &parse, parse.line[parse.index]);
+		else if (parse.status == IN_QUOTES)
+			parse_in_quotes(&tokens, &parse, parse.line[parse.index]);
+		else if (parse.status == IN_DQUOTES)
+			parse_in_dquotes(&tokens, &parse, parse.line[parse.index]);
 		parse.index++;
 	}
-	int size = lstsize(tokens);
-	printf("list size = %d\n", size);
+	int size = token_lst_size(tokens);
+	printf("list size = %d\n\n", size);
 	return (create_array(&tokens, size));
 }

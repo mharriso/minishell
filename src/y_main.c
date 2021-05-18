@@ -6,9 +6,12 @@
 int	main()
 {
 	char **tokens;
+	char *line;
 
-	tokens = parser("123 hello 444");
+	get_next_line(0, &line);
+	tokens = parser(line);
 	for (size_t i = 0; tokens[i]; i++)
 		printf("%s\n", tokens[i]);
+
 	return (0);
 }
