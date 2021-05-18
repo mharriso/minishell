@@ -11,7 +11,8 @@ HEADER	=	buildin.h \
 			env_func.h\
 			libft.h \
 			structs.h \
-			parser.h
+			parser.h \
+			utils.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 

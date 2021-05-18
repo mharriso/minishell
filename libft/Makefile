@@ -47,6 +47,7 @@ BONUS_FILES = ft_lstadd_back.c \
 				ft_lstiter.c \
 				ft_split_set.c \
 				ft_strcmp.c \
+				ft_lstremove.c\
 				get_next_line.c
 
 OBJ_BONUS = $(BONUS_FILES:.c=.o)
