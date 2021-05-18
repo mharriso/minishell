@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:24:34 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/17 19:47:58 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/18 17:37:59 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 #include "parser.h"
 #include "exit.h"
 
-void	parse_init(t_parse *parse, char *line)
+void	line_init(t_line *line, char *str)
 {
-	parse->line = line;
-	parse->status = NORMAL;
-	parse->index = 0;
-	parse->len = ft_strlen(line) + 1;
+	line->data = str;
+	line->status = NORMAL;
+	line->index = 0;
+	line->len = ft_strlen(str) + 1;
 }
 
 void	create_new_token(t_token **tokens, int len)
@@ -36,7 +36,7 @@ void	create_new_token(t_token **tokens, int len)
 	if(!new || !new->data)
 		error_exit("malloc error");
 	new->type = EMPTY;
-	new->index = 0;
+	new->len = 0;
 	new->next = *tokens;
 	*tokens = new;
 }
@@ -51,7 +51,7 @@ void	start_tokens(t_token **tokens, int len)
 	if(!new || !new->data)
 		error_exit("malloc error");
 	new->type = EMPTY;
-	new->index = 0;
+	new->len = 0;
 	new->next = *tokens;
 	*tokens = new;
 }
@@ -67,4 +67,36 @@ int	token_lst_size(t_token *lst)
 		i++;
 	}
 	return (i);
+}
+
+void	clear_tokens(t_token **lst, void (*del)(void *))
+{
+	t_token	*tmp;
+
+	if (!lst || !(*lst))
+		return ;
+	while (*lst != NULL)
+	{
+		tmp = (*lst)->next;
+		if (del)
+			del((*lst)->data);
+		free(*lst);
+		*lst = tmp;
+	}
+}
+
+void *ft_realloc(void *ptr, size_t src_size, size_t new_size)
+{
+	void *new;
+
+	new = NULL;
+	if(ptr && src_size < new_size)
+	{
+		new = malloc(new_size);
+		if(!new)
+			return (NULL);
+		ft_memcpy(new, (const void *)ptr, src_size);
+		free(ptr);
+	}
+	return (new);
 }
