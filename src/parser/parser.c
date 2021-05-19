@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/18 14:40:00 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/18 18:24:59 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,83 +17,91 @@
 #include "parser.h"
 #include <string.h> //delete
 
-void	finish_redirect(t_token **tokens, t_parse *parse, char c)
+
+void	finish_redirect_token(t_token **tokens, t_line *line, char c)
 {
 	if (c != '>' && (*tokens)->type == R_REDIRECT)
-		create_new_token(tokens, parse->len);
+		create_new_token(tokens, line->len);
 }
 
-void	parse_normal(t_token **tokens, t_parse *parse, char c)
+void	parse_normal(t_token **tokens, t_line *line, char c)
 {
-	finish_redirect(tokens, parse, c);
+	finish_redirect_token(tokens, line, c);
 	if (c == '\"')
-		parse->status = IN_DQUOTES;
+	{
+		create_new_token(tokens, line->len);
+		line->status = IN_DQUOTES;
+	}
 	else if (c == '\'')
-		parse->status = IN_QUOTES;
+	{
+		create_new_token(tokens, line->len);
+		line->status = IN_QUOTES;
+	}
 	else if (c == '>' && (*tokens)->type == R_REDIRECT)
 	{
 		(*tokens)->type = DR_REDIRECT;
-		(*tokens)->data[(*tokens)->index++] = c;
-		create_new_token(tokens, parse->len);
+		(*tokens)->data[(*tokens)->len++] = c;
+		create_new_token(tokens, line->len);
 	}
 	else if (c == '>')
 	{
-		create_new_token(tokens, parse->len);
+		create_new_token(tokens, line->len);
 		(*tokens)->type = R_REDIRECT;
-		(*tokens)->data[(*tokens)->index++] = c;
+		(*tokens)->data[(*tokens)->len++] = c;
 	}
 	else if (c == '<')
 	{
-		create_new_token(tokens, parse->len);
+		create_new_token(tokens, line->len);
 		(*tokens)->type = L_REDIRECT;
-		(*tokens)->data[(*tokens)->index++] = c;
-		create_new_token(tokens, parse->len);
+		(*tokens)->data[(*tokens)->len++] = c;
+		create_new_token(tokens, line->len);
 	}
 	else if (c == ' ' || c == '\t')
-		create_new_token(tokens, parse->len);
+		create_new_token(tokens, line->len);
 	else if (c == '|')
 	{
-		create_new_token(tokens, parse->len);
+		create_new_token(tokens, line->len);
 		(*tokens)->type = PIPE;
-		(*tokens)->data[(*tokens)->index++] = c;
-		create_new_token(tokens, parse->len);
+		(*tokens)->data[(*tokens)->len++] = c;
+		create_new_token(tokens, line->len);
 	}
+	//else if (c == '$')
 	else
 	{
 		(*tokens)->type = TEXT;
-		(*tokens)->data[(*tokens)->index++] = c;
+		(*tokens)->data[(*tokens)->len++] = c;
 	}
 }
 
-void	parse_in_quotes(t_token **tokens, t_parse *parse, char c)
+void	parse_in_quotes(t_token **tokens, t_line *line, char c)
 {
 	if (c == '\'')
 	{
-		create_new_token(tokens, parse->len);
-		parse->status = NORMAL;
+		create_new_token(tokens, line->len);
+		line->status = NORMAL;
 	}
 	else
 	{
 		(*tokens)->type = TEXT;
-		(*tokens)->data[(*tokens)->index++] = c;
+		(*tokens)->data[(*tokens)->len++] = c;
 	}
 }
 
-void	parse_in_dquotes(t_token **tokens, t_parse *parse, char c)
+void	parse_in_dquotes(t_token **tokens, t_line *line, char c)
 {
 	if (c == '\"')
 	{
-		create_new_token(tokens, parse->len);
-		parse->status = NORMAL;
+		create_new_token(tokens, line->len);
+		line->status = NORMAL;
 	}
 	else
 	{
 		(*tokens)->type = TEXT;
-		(*tokens)->data[(*tokens)->index++] = c;
+		(*tokens)->data[(*tokens)->len++] = c;
 	}
 }
 
-char *type(int type)
+char *type(int type) //delete
 {
 	if(type == EMPTY)
 		return strdup("EMPTY");
@@ -123,35 +131,38 @@ char		**create_array(t_token **head, int size)
 	while (tmp)
 	{
 		size--;
-		printf("%-11s:  %s\n", type(tmp->type), tmp->data);
-		if (!(arr[size] = malloc(tmp->index + 1)))
+		printf("%-11s:  %s\n", type(tmp->type), tmp->data); //delete
+		if (!(arr[size] = malloc(tmp->len + 1)))
 			error_exit("malloc error");
-		ft_memcpy(arr[size], tmp->data, tmp->index);
-		arr[size][tmp->index] = '\0';
+		ft_memcpy(arr[size], tmp->data, tmp->len);
+		arr[size][tmp->len] = '\0';
 		tmp = tmp->next;
 	}
 	return (arr);
 }
 
-char	**parser(char *line)
+char	**parser(char *str)
 {
 	t_token		*tokens;
-	t_parse		parse;
+	t_line		line;
+	char		**tokens_arr;
 
 	tokens = NULL;
-	parse_init(&parse, line);
-	start_tokens(&tokens, parse.len);
-	while (parse.line[parse.index])
+	line_init(&line, str);
+	start_tokens(&tokens, line.len);
+	while (line.data[line.index])
 	{
-		if (parse.status == NORMAL)
-			parse_normal(&tokens, &parse, parse.line[parse.index]);
-		else if (parse.status == IN_QUOTES)
-			parse_in_quotes(&tokens, &parse, parse.line[parse.index]);
-		else if (parse.status == IN_DQUOTES)
-			parse_in_dquotes(&tokens, &parse, parse.line[parse.index]);
-		parse.index++;
+		if (line.status == NORMAL)
+			parse_normal(&tokens, &line, line.data[line.index]);
+		else if (line.status == IN_QUOTES)
+			parse_in_quotes(&tokens, &line, line.data[line.index]);
+		else if (line.status == IN_DQUOTES)
+			parse_in_dquotes(&tokens, &line, line.data[line.index]);
+		line.index++;
 	}
 	int size = token_lst_size(tokens);
 	printf("list size = %d\n\n", size);
-	return (create_array(&tokens, size));
+	tokens_arr = create_array(&tokens, size);
+	clear_tokens(&tokens, free);
+	return (tokens_arr);
 }
