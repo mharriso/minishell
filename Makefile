@@ -24,7 +24,9 @@ SRC_BUILDIN	=	ft_pwd.c \
 				ft_env.c \
 				ft_export.c \
 				ft_exit.c \
-				ft_unset.c
+				ft_unset.c \
+				ft_echo.c \
+				ft_runbuildin.c
 
 SRC_PARSER	=	parser.c
 
