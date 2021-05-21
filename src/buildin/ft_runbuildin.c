@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/18 16:27:46 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/18 16:56:12 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/21 16:11:22 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,38 @@ static char	*ft_absname(char *arg)
 	return (name);
 }
 
+static int run_second_part(char *name, char **argv, t_list **env)
+{
+	int		res;
+	res = ft_strcmp("exit", name);
+	if (!res)
+	{
+		ft_exit(argv);
+		return (1);
+	}
+	res = ft_strcmp("export", name);
+	if (!res)
+	{
+		ft_export(argv, env);
+		return (1);
+	}
+	res = ft_strcmp("pwd", name);
+	if (!res)
+	{
+		ft_pwd();
+		return (1);
+	}
+	res = ft_strcmp("unset", name);
+	if (!res)
+	{
+		ft_unset(argv, env);
+		return (1);
+	}
+	return (0);
+}
+
 //argv must be from argv[1]
-void	ft_runbuildin(char **argv, t_list **env)
+int	ft_runbuildin(char **argv, t_list **env)
 {
 	int		res;
 	char	*name;
@@ -40,23 +70,22 @@ void	ft_runbuildin(char **argv, t_list **env)
 	name = ft_absname(argv[0]);
 	res = ft_strcmp("cd", name);
 	if (!res)
+	{
 		ft_cd(argv + 1, env);
+		return (1);
+	}
 	res = ft_strcmp("echo", name);
 	if (!res)
+	{
 		ft_echo(argv + 1);
+		return (1);
+	}
 	res = ft_strcmp("env", name);
 	if (!res)
+	{
 		ft_env(*env);
-	res = ft_strcmp("exit", name);
-	if (!res)
-		ft_exit(argv + 1);
-	res = ft_strcmp("export", name);
-	if (!res)
-		ft_export(argv + 1, env);
-	res = ft_strcmp("pwd", name);
-	if (!res)
-		ft_pwd();
-	res = ft_strcmp("unset", name);
-	if (!res)
-		ft_unset(argv + 1, env);
+		return (1);
+	}
+	res = run_second_part(name, argv + 1, env);
+	return (res);
 }

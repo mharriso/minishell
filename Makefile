@@ -5,19 +5,24 @@ FT		=	libft
 INC		=	inc
 UTILS	=	utils
 PARSER	=	parser
+FORK	=	fork
 
 HEADER	=	buildin.h \
 			exit.h \
 			env_func.h\
 			libft.h \
 			structs.h \
-			utils.h
+			utils.h \
+			fork.h \
+			com_func.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
 SRC_UTILS	=	check_long_long.c \
 				exit.c \
-				env_func.c
+				env_func.c \
+				get_full_path.c \
+				com_func.c
 
 SRC_BUILDIN	=	ft_pwd.c \
 				ft_cd.c \
@@ -28,10 +33,15 @@ SRC_BUILDIN	=	ft_pwd.c \
 				ft_echo.c \
 				ft_runbuildin.c
 
+SRC_FORK	=	redirect.c \
+				fork.c\
+				pipe.c
+
 SRC_PARSER	=	parser.c
 
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(BUILDIN)/, $(SRC_BUILDIN)) \
+			$(addprefix $(FORK)/, $(SRC_FORK))
 			#$(addprefix $(PARSER)/, $(SRC_PARSER))
 
 SOURCES	= $(addprefix $(SRC)/, $(SRC_F))
