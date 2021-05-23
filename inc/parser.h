@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:08:45 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/18 17:19:20 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/20 17:46:49 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 #define IN_DQUOTES 3
 #define EMPTY 0
 #define TEXT 4
-#define R_REDIRECT 5
-#define L_REDIRECT 6
-#define DR_REDIRECT 7
+#define RED_RIGHT 5
+#define RED_LEFT 6
+#define RED_DRIGHT 7
 #define PIPE 8
 
 typedef struct s_line
@@ -38,13 +38,14 @@ typedef struct	s_token
 	struct s_token	*next;
 }				t_token;
 
-char	**parser(char *line);
+char	**parser(char *str, t_list **env);
 void	create_new_token(t_token **tokens, int len);
 void	start_tokens(t_token **tokens, int len);
 int		token_lst_size(t_token *lst);
+void	clear_tokens(t_token **lst, void (*del)(void *));
 void	line_init(t_line *line, char *str);
 void	*ft_realloc(void *ptr, size_t src_size, size_t new_size);
-void	clear_tokens(t_token **lst, void (*del)(void *));
+
 
 
 #endif

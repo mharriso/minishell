@@ -21,8 +21,8 @@ int	main(int argc, char **argv, char **env)
 	lenv = env_create(env);
 
 	get_next_line(0, &line);
-	tokens = parser(line);
-
+	tokens = parser(line, &lenv);
+	printf("MAIN\n");
 	for (size_t i = 0; tokens[i]; i++)
 		printf("%s\n", tokens[i]);
 	ft_lstclear(&lenv, env_clear);
