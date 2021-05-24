@@ -14,7 +14,8 @@ HEADER	=	buildin.h \
 			structs.h \
 			utils.h \
 			fork.h \
-			com_func.h
+			com_func.h \
+			red_func.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
@@ -22,7 +23,9 @@ SRC_UTILS	=	check_long_long.c \
 				exit.c \
 				env_func.c \
 				get_full_path.c \
-				com_func.c
+				com_func.c \
+				red_func.c\
+				commands_handler.c
 
 SRC_BUILDIN	=	ft_pwd.c \
 				ft_cd.c \
@@ -91,7 +94,7 @@ norm:
 
 s_test: ${S_OBJECTS}
 	make bonus -C ${FT}
-	gcc -I ${INC} $(S_OBJECTS) -l ft -L ${FT} -o ${S_NAME}
+	gcc -I ${INC} $(S_SOURCE) -g -l ft -L ${FT} -o ${S_NAME}
 s_clean:
 	make clean -C ${FT}
 	rm -f ${S_OBJECTS}

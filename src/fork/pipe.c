@@ -40,16 +40,16 @@ void print_tfork(t_fork *info)
 	{
 		printf("PIPE_OUT\n");
 	}
-	printf("pid = %d\n", (int)info->pid);
-	printf("fd[0] 0 = %d, 1 = %d, type = %d\n", info->fd[0].fd[0], info->fd[0].fd[1], info->fd[0].type);
-	printf("fd[1] 0 = %d, 1 = %d, type = %d\n", info->fd[1].fd[0], info->fd[1].fd[1], info->fd[1].type);
+	//printf("pid = %d\n", (int)info->pid);
+	//printf("fd[0] 0 = %d, 1 = %d, type = %d\n", info->fd[0].fd[0], info->fd[0].fd[1], info->fd[0].type);
+	//printf("fd[1] 0 = %d, 1 = %d, type = %d\n", info->fd[1].fd[0], info->fd[1].fd[1], info->fd[1].type);
 }
 
 void	do_pipe(t_list *com_list, t_list **env)
 {
 	t_list	*temp;
 	t_redir	*red;
-	//t_fork	*info;
+	t_fork	*info;
 	char	**commands;
 
 	int		status;
@@ -58,38 +58,35 @@ void	do_pipe(t_list *com_list, t_list **env)
 	temp = com_list;
 	while (temp)
 	{
-		((t_command*)com_list->content)->info = make_tfork(temp);
+		((t_command*)temp->content)->info = make_tfork(temp);
 		print_tfork(com_getinfo(temp));
 		commands = com_getcom(temp);
 		red = com_getredir(temp);
-		printf("befo exec\n");
-		exec_external(commands, red, ((t_command*)com_list->content)->info, env);
+		exec_external(commands, red, ((t_command*)temp->content)->info, env);
 		temp = temp->next;
 	}
-	printf("here\n");
 	temp = com_list;
-	// while (temp)
-	// {
-	// 	info = com_getinfo(temp);
-	// 	if (info->pipe_type & PIPE_IN)
-	// 	{
-	// 		close(info->fd[0].fd[0]);
-	// 		close(info->fd[0].fd[1]);
-	// 	}
-	// 	if (info->pipe_type & PIPE_OUT)
-	// 	{
-	// 		close(info->fd[1].fd[0]);
-	// 		close(info->fd[1].fd[1]);
-	// 	}
-	// 	temp = temp->next;
-	// }
-	printf("here2\n");
-	// temp = com_list;
-	// while (temp)
-	// {
-	// 	info = com_getinfo(temp);
-	// 	waitpid(info->pid, &status, 0);
-	// 	temp = temp->next;
-	// }
+	while (temp)
+	{
+		info = com_getinfo(temp);
+		if (info->pipe_type & PIPE_IN)
+		{
+			close(info->fd[0].fd[0]);
+			close(info->fd[0].fd[1]);
+		}
+		if (info->pipe_type & PIPE_OUT)
+		{
+			close(info->fd[1].fd[0]);
+			close(info->fd[1].fd[1]);
+		}
+		temp = temp->next;
+	}
+	temp = com_list;
+	while (temp)
+	{
+		info = com_getinfo(temp);
+		waitpid(info->pid, &status, 0);
+		temp = temp->next;
+	}
 
 }

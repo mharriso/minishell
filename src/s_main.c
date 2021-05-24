@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 13:32:03 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/21 17:22:08 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/24 15:16:12 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include "buildin.h"
 #include "utils.h"
 #include "fork.h"
+#include "com_func.h"
+#include "red_func.h"
 
 // static char	**fill_arg(int argc, char **argv)
 // {
@@ -35,49 +37,36 @@ t_redir *create_red()
 	t_redir *red;
 
 	red = malloc(sizeof(t_redir) * 3);
-	red[0].fname = ft_strdup("a");
-	red[0].type = RED_DRIGHT;
-	red[1].fname = ft_strdup("b");
-	red[1].type = RED_LEFT;
-	red[2].fname = NULL;
-	red[2].type = 0;
+	red[0] = red_create(ft_strdup("a"), RED_RIGHT);
+	red[1] = red_create(ft_strdup("b"), RED_RIGHT);
+	red[2] = red_create_last();
 
 	return red;
 }
 
 t_list	*create_cmd()
 {
-	t_command	*cmd;
 	t_list		*lst;
 	t_list		*node;
 	char		**com;
 
-	cmd = malloc(sizeof(t_command));
 	com = malloc(sizeof(char*) * 2);
-	com[0] = ft_strdup("yes");
+	com[0] = ft_strdup("pwd");
 	com[1] = NULL;
-	cmd->com = com;
-	cmd->red = NULL;
-	cmd->pipe_type = PIPE_OUT;
-	lst = ft_lstnew(cmd);
+	lst = ft_lstnew(com_create(com, NULL, PIPE_OUT));
 
-	cmd = malloc(sizeof(t_command));
 	com = malloc(sizeof(char*) * 2);
-	com[0] = ft_strdup("head");
+	com[0] = ft_strdup("cat");
 	com[1] = NULL;
-	cmd->com = com;
-	cmd->red = NULL;
-	cmd->pipe_type = PIPE_IN;
-	node = ft_lstnew(cmd);
+	node = ft_lstnew(com_create(com, NULL, PIPE_IN));
 	ft_lstadd_back(&lst, node);
 
 	return (lst);
 }
 
-int	main(int argc, char **argv, char **envp)
+void ft_run(int argc, char **argv, char **envp)
 {
 	t_list	*env;
-	// t_redir	*red;
 	t_list	*cmd_list;
 
 	char **a;
@@ -85,13 +74,17 @@ int	main(int argc, char **argv, char **envp)
 
 	env = env_create(envp);
 
-	if (argc > 1)
+	if (argc >= 1)
 	{
 		cmd_list = create_cmd();
-		do_pipe(cmd_list, &env);
-		//exec_external(argv + 1, NULL, NULL, &env);
+		commands_handler(cmd_list, &env);
+		ft_lstclear(&cmd_list, com_clear);
 	}
-	printf("in the end\n");
 	ft_lstclear(&env, env_clear);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	ft_run(argc, argv,envp);
 	return (0);
 }

@@ -17,8 +17,6 @@ void	exec_command(char **command, t_list **env)
 		exec_external(command, NULL, NULL, env);
 }
 
-
-
 void	commands_handler(t_list *com_list, t_list **env)
 {
 	char	**command;

@@ -8,7 +8,6 @@
 
 static void	ft_dup(t_fdi *info)
 {
-	printf("info->fd[info->type] = %d, info->type = %d\n", info->fd[info->type], info->type);
 	dup2(info->fd[info->type], info->type);
 	close(info->fd[0]);
 	close(info->fd[1]);
@@ -44,7 +43,6 @@ static void	do_fork(t_fork *info, char **commands, t_redir *red, t_list **env)
 
 		if (info->pipe_type & PIPE_IN)
 			ft_dup(info->fd);
-		printf("from do_fork\n");
 		if (info->pipe_type & PIPE_OUT)
 			ft_dup(info->fd + 1);
 		do_redirect(red);
@@ -58,8 +56,6 @@ void	exec_external(char **command, t_redir *red, t_fork *info, t_list **env)
 	{
 		info = malloc(sizeof(t_fork));
 		info->pipe_type = 0;
-		printf("from exec in\n");
 	}
-	printf("from exec out\n");
 	do_fork(info, command, red, env);
 }

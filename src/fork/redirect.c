@@ -3,7 +3,7 @@
 #include <fcntl.h>
 #include "structs.h"
 
-static int	ft_redirect(char *fname, int red_type)
+static int	redirect(char *fname, int red_type)
 {
 	int		fd;
 	int		flags;
@@ -34,7 +34,7 @@ void	do_redirect(t_redir *red)
 		return ;
 	while (red->type)
 	{
-		red->fd = ft_redirect(red->fname, red->type);
+		red->fd = redirect(red->fname, red->type);
 		red++;
 	}
 }
