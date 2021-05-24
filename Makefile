@@ -5,33 +5,48 @@ FT		=	libft
 INC		=	inc
 UTILS	=	utils
 PARSER	=	parser
+FORK	=	fork
 
 HEADER	=	buildin.h \
 			exit.h \
 			env_func.h\
 			libft.h \
 			structs.h \
-			parser.h \
-			utils.h
+			utils.h \
+			fork.h \
+			com_func.h \
+			red_func.h \
+			parser.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
 SRC_UTILS	=	check_long_long.c \
 				exit.c \
-				env_func.c
+				env_func.c \
+				get_full_path.c \
+				com_func.c \
+				red_func.c\
+				commands_handler.c
 
 SRC_BUILDIN	=	ft_pwd.c \
 				ft_cd.c \
 				ft_env.c \
 				ft_export.c \
 				ft_exit.c \
-				ft_unset.c
+				ft_unset.c \
+				ft_echo.c \
+				ft_runbuildin.c
+
+SRC_FORK	=	redirect.c \
+				fork.c\
+				pipe.c
 
 SRC_PARSER	=	parser.c \
 				parser_utils.c
 
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(BUILDIN)/, $(SRC_BUILDIN)) \
+			$(addprefix $(FORK)/, $(SRC_FORK)) \
 			$(addprefix $(PARSER)/, $(SRC_PARSER))
 
 SOURCES	= $(addprefix $(SRC)/, $(SRC_F))
@@ -81,7 +96,7 @@ norm:
 
 s_test: ${S_OBJECTS}
 	make bonus -C ${FT}
-	gcc -I ${INC} $(S_OBJECTS) -l ft -L ${FT} -o ${S_NAME}
+	gcc -I ${INC} $(S_SOURCE) -g -l ft -L ${FT} -o ${S_NAME}
 s_clean:
 	make clean -C ${FT}
 	rm -f ${S_OBJECTS}

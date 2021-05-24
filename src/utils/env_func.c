@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 17:58:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/17 20:46:02 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/21 16:45:09 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ char	**env_listtoarr(t_list *env)
 	char	**new_env;
 	char	*value;
 	char	*name;
-	size_t	i;
+	int	i;
 
 	i = ft_lstsize(env);
 	new_env = (char**)malloc(sizeof(char*) * (i + 1));
@@ -217,10 +217,10 @@ static int	lstsize_wo_v(t_list *lst)
 	i = 0;
 	while (lst)
 	{
-		lst = lst->next;
 		value = e_value(lst);
 		if (value)
 			i++;
+		lst = lst->next;
 	}
 	return (i);
 }
@@ -230,7 +230,7 @@ char	**env_listtoarr_to_new(t_list *env)
 	char	**new_env;
 	char	*value;
 	char	*name;
-	size_t	i;
+	int		i;
 
 	i = lstsize_wo_v(env);
 	new_env = (char**)malloc(sizeof(char*) * (i + 1));

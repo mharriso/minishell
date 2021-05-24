@@ -12,5 +12,6 @@ void	ft_env(t_list *env);
 void	ft_export(char **argv, t_list **env);
 void	ft_exit(char **argv);
 void	ft_unset(char **argv, t_list **env);
+int		ft_runbuildin(char **argv, t_list **env);
 
 #endif
