@@ -15,7 +15,8 @@ HEADER	=	buildin.h \
 			utils.h \
 			fork.h \
 			com_func.h \
-			red_func.h
+			red_func.h \
+			parser.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
@@ -40,12 +41,13 @@ SRC_FORK	=	redirect.c \
 				fork.c\
 				pipe.c
 
-SRC_PARSER	=	parser.c
+SRC_PARSER	=	parser.c \
+				parser_utils.c
 
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(BUILDIN)/, $(SRC_BUILDIN)) \
-			$(addprefix $(FORK)/, $(SRC_FORK))
-			#$(addprefix $(PARSER)/, $(SRC_PARSER))
+			$(addprefix $(FORK)/, $(SRC_FORK)) \
+			$(addprefix $(PARSER)/, $(SRC_PARSER))
 
 SOURCES	= $(addprefix $(SRC)/, $(SRC_F))
 
