@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:24:34 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/18 17:37:59 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/25 22:47:21 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 void	line_init(t_line *line, char *str)
 {
 	line->data = str;
-	line->status = NORMAL;
+	line->status = NORMAL; 
 	line->index = 0;
 	line->len = ft_strlen(str) + 1;
 }

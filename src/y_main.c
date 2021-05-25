@@ -35,6 +35,7 @@ char *type(int type) //delete
 	else
 		return strdup("ERROR TYPE");
 }
+
 char		**create_array(t_token **head, int size)
 {
 	char	**arr;

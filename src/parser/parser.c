@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/25 22:27:07 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/25 22:34:30 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,11 @@ void	parse_normal(t_token **tokens, t_line *line, t_list **env, char c)
 		parse_env(tokens, line, env);
 	}
 	//else if (c == ';')
-
+	else if (c == '\\')
+	{
+		(*tokens)->type = TEXT;
+		(*tokens)->data[(*tokens)->len++] = line->data[++line->index];
+	}
 	else
 	{
 		(*tokens)->type = TEXT;
@@ -157,6 +161,11 @@ void	parse_in_dquotes(t_token **tokens, t_line *line, t_list **env, char c)
 	{
 		(*tokens)->type = TEXT;
 		parse_env(tokens, line, env);
+	}
+	else if (c == '\\')
+	{
+		(*tokens)->type = TEXT;
+		(*tokens)->data[(*tokens)->len++] = line->data[++line->index];
 	}
 	else
 	{
@@ -176,10 +185,6 @@ void	parse_in_quotes(t_token **tokens, t_line *line, char c)
 	}
 }
 
-
-
-
-
 t_token	*parser(char *str, t_list **env)
 {
 	t_token		*tokens;
@@ -198,10 +203,6 @@ t_token	*parser(char *str, t_list **env)
 			parse_in_quotes(&tokens, &line, line.data[line.index]);
 		line.index++;
 	}
-	//int size = token_lst_size(tokens);
-	//printf("list size = %d\n\n", size);
-	//tokens_arr = create_array(&tokens, size);
-	//clear_tokens(&tokens, free);
 	//printf("g_ret = %d\n", g_ret);
 	return (tokens);
 }
