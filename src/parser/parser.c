@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/23 16:05:21 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/25 22:27:07 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,20 @@
 #include "env_func.h"
 #include <string.h> //delete
 
+//static unsigned int g_ret;
+
 void	parse_redirect(t_token **tokens, t_line *line, char c)
 {
 	if (c == '<')
 	{
-		create_new_token(tokens, line->len);
+		create_new_token(tokens, 1);
 		(*tokens)->type =  RED_LEFT;
 		(*tokens)->data[(*tokens)->len++] = c;
 		create_new_token(tokens, line->len);
 	}
 	else if (c == '>' && line->data[line->index + 1] == '>')
 	{
-		create_new_token(tokens, line->len);
+		create_new_token(tokens, 2);
 		(*tokens)->type =  RED_DRIGHT;
 		(*tokens)->data[(*tokens)->len++] = c;
 		(*tokens)->data[(*tokens)->len++] = line->data[++line->index];
@@ -37,7 +39,7 @@ void	parse_redirect(t_token **tokens, t_line *line, char c)
 	}
 	else if (c == '>')
 	{
-		create_new_token(tokens, line->len);
+		create_new_token(tokens, 1);
 		(*tokens)->type =  RED_RIGHT;
 		(*tokens)->data[(*tokens)->len++] = c;
 		create_new_token(tokens, line->len);
@@ -53,14 +55,15 @@ char *get_env_name(t_line *line)
 	name = malloc(line->len - line->index + 1);
 	if(!name)
 		error_exit("malloc error");
-	c = line->data[line->index++];
-	res = ft_isalnum(c) || c == '_';
+	c = line->data[line->index];
 	i = 0;
-	while(c && res)
+	while(1)
 	{
-		name[i] = c;
-		c = line->data[line->index++];
 		res = ft_isalnum(c) || c == '_';
+		if(!c || !res)
+			break ;
+		name[i] = c;
+		c = line->data[++line->index];
 		i++;
 	}
 	line->index--;
@@ -71,12 +74,14 @@ int	check_first_symbol(t_token **tokens, t_line *line, char c)
 {
 	int res;
 
-	if(c == ' ' || c == '\0' || c == '\'' || c == '\"')
+	if(c == ' ' || c == '\0' || (c == '\"' && line->status == IN_DQUOTES))
 	{
 		(*tokens)->type = TEXT;
 		(*tokens)->data[(*tokens)->len++] = '$';
 		return (0);
 	}
+	if(c == '\'' || c == '\"')
+		return (0);
 	res = ft_isalpha(c) || c == '_';
 	line->index++;
 	if(c == '?')
@@ -102,38 +107,41 @@ void parse_env(t_token **tokens, t_line *line, t_list **env)
 		return ;
 	name = get_env_name(line);
 	value = env_getvaluebyname(name, *env);
+	printf("name  = |%s|\nvalue = %s\n", name, value);
+	if(!value)
+		return ;
 	tmp = ft_strjoin((*tokens)->data, value);
+	if(!tmp)
+		error_exit("malloc error\n");
 	free((*tokens)->data);
 	(*tokens)->data = tmp;
 	(*tokens)->len += ft_strlen(value);
-	printf("name  = |%s|\nvalue = %s\n", name, value);
 }
 
 void	parse_normal(t_token **tokens, t_line *line, t_list **env, char c)
 {
 	if (c == '\"')
-	{
-		create_new_token(tokens, line->len);
 		line->status = IN_DQUOTES;
-	}
 	else if (c == '\'')
-	{
-		create_new_token(tokens, line->len);
 		line->status = IN_QUOTES;
-	}
 	else if (c == '>' || c == '<')
 		parse_redirect(tokens, line, c);
 	else if (c == ' ' || c == '\t')
 		create_new_token(tokens, line->len);
 	else if (c == '|')
 	{
-		create_new_token(tokens, line->len);
+		create_new_token(tokens, 1);
 		(*tokens)->type = PIPE;
 		(*tokens)->data[(*tokens)->len++] = c;
 		create_new_token(tokens, line->len);
 	}
 	else if (c == '$')
+	{
+		(*tokens)->type = TEXT;
 		parse_env(tokens, line, env);
+	}
+	//else if (c == ';')
+
 	else
 	{
 		(*tokens)->type = TEXT;
@@ -144,11 +152,8 @@ void	parse_normal(t_token **tokens, t_line *line, t_list **env, char c)
 void	parse_in_dquotes(t_token **tokens, t_line *line, t_list **env, char c)
 {
 	if (c == '\"')
-	{
-		create_new_token(tokens, line->len);
 		line->status = NORMAL;
-	}
-	else if (c == '$' && line->data[line->index + 1])
+	else if (c == '$')
 	{
 		(*tokens)->type = TEXT;
 		parse_env(tokens, line, env);
@@ -163,10 +168,7 @@ void	parse_in_dquotes(t_token **tokens, t_line *line, t_list **env, char c)
 void	parse_in_quotes(t_token **tokens, t_line *line, char c)
 {
 	if (c == '\'')
-	{
-		create_new_token(tokens, line->len);
 		line->status = NORMAL;
-	}
 	else
 	{
 		(*tokens)->type = TEXT;
@@ -174,51 +176,14 @@ void	parse_in_quotes(t_token **tokens, t_line *line, char c)
 	}
 }
 
-char *type(int type) //delete
-{
-	if(type == EMPTY)
-		return strdup("EMPTY");
-	else if(type == TEXT)
-		return strdup("TEXT");
-	else if(type ==  RED_RIGHT)
-		return strdup("RED_RIGHT");
-	else if(type ==  RED_DRIGHT)
-		return strdup("RED_DRIGHT");
-	else if(type ==  RED_LEFT)
-		return strdup("RED_LEFT");
-	else if(type == PIPE)
-		return strdup("PIPE");
-	else
-		return strdup("ERROR TYPE");
-}
 
-char		**create_array(t_token **head, int size)
-{
-	char	**arr;
-	t_token	*tmp;
 
-	tmp = *head;
-	if (!(arr = malloc((size + 1) * sizeof(char *))))
-		error_exit("malloc error");
-	arr[size] = NULL;
-	while (tmp)
-	{
-		size--;
-		printf("%-11s:  %s\n", type(tmp->type), tmp->data); //delete
-		if (!(arr[size] = malloc(tmp->len + 1)))
-			error_exit("malloc error");
-		ft_memcpy(arr[size], tmp->data, tmp->len);
-		arr[size][tmp->len] = '\0';
-		tmp = tmp->next;
-	}
-	return (arr);
-}
 
-char	**parser(char *str, t_list **env)
+
+t_token	*parser(char *str, t_list **env)
 {
 	t_token		*tokens;
 	t_line		line;
-	char		**tokens_arr;
 
 	tokens = NULL;
 	line_init(&line, str);
@@ -231,12 +196,12 @@ char	**parser(char *str, t_list **env)
 			parse_in_dquotes(&tokens, &line, env, line.data[line.index]);
 		else if (line.status == IN_QUOTES)
 			parse_in_quotes(&tokens, &line, line.data[line.index]);
-
 		line.index++;
 	}
-	int size = token_lst_size(tokens);
+	//int size = token_lst_size(tokens);
 	//printf("list size = %d\n\n", size);
-	tokens_arr = create_array(&tokens, size);
-	clear_tokens(&tokens, free);
-	return (tokens_arr);
+	//tokens_arr = create_array(&tokens, size);
+	//clear_tokens(&tokens, free);
+	//printf("g_ret = %d\n", g_ret);
+	return (tokens);
 }

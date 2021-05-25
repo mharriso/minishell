@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:08:45 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/20 17:46:49 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/25 19:19:39 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ typedef struct	s_token
 	struct s_token	*next;
 }				t_token;
 
-char	**parser(char *str, t_list **env);
+t_token	*parser(char *str, t_list **env);
 void	create_new_token(t_token **tokens, int len);
 void	start_tokens(t_token **tokens, int len);
 int		token_lst_size(t_token *lst);
