@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 19:17:09 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/24 15:15:57 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/25 15:00:54 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,20 @@
 #include <stdio.h>
 #include "buildin.h"
 
-void	ft_pwd(void)
+int	ft_pwd(void)
 {
 	char	*p;
 
 	p = getcwd(NULL, PWD_BUFF);
 	if (!p)
+	{
 		printf("pwd: error\n");
+		return (1);
+	}
 	else
 	{
 		printf("%s\n", p);
 		free(p);
 	}
+	return (0);
 }

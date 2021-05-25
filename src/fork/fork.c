@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <sys/stat.h>
 #include "structs.h"
 #include "libft.h"
 #include "buildin.h"
@@ -15,23 +16,37 @@ static void	ft_dup(t_fdi *info)
 
 static void	ft_execve(char **commands, t_list **env)
 {
-	int		res;
-	char	*path;
-	char	**a_env;
+	int			res;
+	char		*path;
+	char		**a_env;
+	struct stat	buf;
 
 	res = ft_runbuildin(commands, env);
-	if (res)
-		exit(0);//TODO what to return?
+	if (res != -1)
+		exit(res);
 	path = get_full_path(*commands, *env);
 	if (path)
 	{
-		a_env = env_listtoarr_to_new(*env);
-		execve(path, commands, a_env);
+		res = stat("child.exe", &buf);
+		if (res == 0)
+		{
+			if (buf.st_mode & S_IEXEC)
+			{
+				a_env = env_listtoarr_to_new(*env);
+				execve(path, commands, a_env);
+			}
+			else
+			{
+				printf("minishell: %s: not a exec file\n", *commands);
+				exit(126);
+			}
+		}
+		exit(127);
 	}
 	else
 	{
 		printf("minishell: %s: command not found\n", *commands);
-		exit(1);
+		exit(127);
 	}
 }
 

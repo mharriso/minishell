@@ -35,6 +35,7 @@ t_command	*com_create(char **commands, t_redir *red, int pipe_type)
 	com->com = commands;
 	com->pipe_type = pipe_type;
 	com->red = red;
+	com->info = NULL;
 	return (com);
 }
 

@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 13:32:03 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/24 15:16:12 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/25 19:10:32 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,10 @@ void ft_run(int argc, char **argv, char **envp)
 {
 	t_list	*env;
 	t_list	*cmd_list;
+	char *val;
+	int b;
+
+	b = argc;
 
 	char **a;
 	a = argv;
@@ -80,6 +84,7 @@ void ft_run(int argc, char **argv, char **envp)
 		commands_handler(cmd_list, &env);
 		ft_lstclear(&cmd_list, com_clear);
 	}
+
 	ft_lstclear(&env, env_clear);
 }
 

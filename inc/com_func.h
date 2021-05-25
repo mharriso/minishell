@@ -10,6 +10,6 @@ int			com_getptype(t_list *list);
 t_fork		*com_getinfo(t_list *list);
 void		com_clear(void *command);
 t_command	*com_create(char **commands, t_redir *red, int pipe_type);
-void		commands_handler(t_list *com_list, t_list **env);
+int			commands_handler(t_list *com_list, t_list **env);
 
 #endif

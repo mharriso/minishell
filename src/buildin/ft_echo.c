@@ -6,14 +6,14 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 19:53:05 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/17 19:59:41 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/25 14:54:46 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "libft.h"
 
-void	ft_echo(char **argv)
+int	ft_echo(char **argv)
 {
 	int		n;
 	int		i;
@@ -32,4 +32,5 @@ void	ft_echo(char **argv)
 	}
 	if (!n)
 		printf("\n");
+	return (0);
 }
