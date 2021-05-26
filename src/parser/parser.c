@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/25 22:34:30 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/26 20:01:09 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,12 @@ void	parse_redirect(t_token **tokens, t_line *line, char c)
 		(*tokens)->data[(*tokens)->len++] = c;
 		create_new_token(tokens, line->len);
 	}
-	else if (c == '>' && line->data[line->index + 1] == '>')
+	else if (c == '>' && (*(line->data))[line->index + 1] == '>')
 	{
 		create_new_token(tokens, 2);
 		(*tokens)->type =  RED_DRIGHT;
 		(*tokens)->data[(*tokens)->len++] = c;
-		(*tokens)->data[(*tokens)->len++] = line->data[++line->index];
+		(*tokens)->data[(*tokens)->len++] = (*(line->data))[++line->index];
 		create_new_token(tokens, line->len);
 	}
 	else if (c == '>')
@@ -55,7 +55,7 @@ char *get_env_name(t_line *line)
 	name = malloc(line->len - line->index + 1);
 	if(!name)
 		error_exit("malloc error");
-	c = line->data[line->index];
+	c = (*(line->data))[line->index];
 	i = 0;
 	while(1)
 	{
@@ -63,7 +63,7 @@ char *get_env_name(t_line *line)
 		if(!c || !res)
 			break ;
 		name[i] = c;
-		c = line->data[++line->index];
+		c = (*(line->data))[++line->index];
 		i++;
 	}
 	line->index--;
@@ -102,12 +102,14 @@ void parse_env(t_token **tokens, t_line *line, t_list **env)
 	int		res;
 	char	*tmp;
 
-	res = check_first_symbol(tokens, line, line->data[line->index + 1]);
+	(*tokens)->type = TEXT;
+	res = check_first_symbol(tokens, line, (*(line->data))[line->index + 1]);
 	if(!res)
 		return ;
 	name = get_env_name(line);
 	value = env_getvaluebyname(name, *env);
-	printf("name  = |%s|\nvalue = %s\n", name, value);
+	free(name);
+	//printf("name  = |%s|\nvalue = %s\n", name, value);
 	if(!value)
 		return ;
 	tmp = ft_strjoin((*tokens)->data, value);
@@ -116,6 +118,17 @@ void parse_env(t_token **tokens, t_line *line, t_list **env)
 	free((*tokens)->data);
 	(*tokens)->data = tmp;
 	(*tokens)->len += ft_strlen(value);
+}
+
+void semicolon_handler(t_line *line)
+{
+	char *tmp;
+
+	line->status = SEMICOLON;
+	tmp = ft_strdup(*(line->data) + line->index + 1);
+	free(*(line->data));
+	*(line->data) = tmp;
+
 }
 
 void	parse_normal(t_token **tokens, t_line *line, t_list **env, char c)
@@ -136,15 +149,13 @@ void	parse_normal(t_token **tokens, t_line *line, t_list **env, char c)
 		create_new_token(tokens, line->len);
 	}
 	else if (c == '$')
-	{
-		(*tokens)->type = TEXT;
 		parse_env(tokens, line, env);
-	}
-	//else if (c == ';')
+	else if (c == ';')
+		semicolon_handler(line);
 	else if (c == '\\')
 	{
 		(*tokens)->type = TEXT;
-		(*tokens)->data[(*tokens)->len++] = line->data[++line->index];
+		(*tokens)->data[(*tokens)->len++] = (*(line->data))[++line->index];
 	}
 	else
 	{
@@ -158,14 +169,11 @@ void	parse_in_dquotes(t_token **tokens, t_line *line, t_list **env, char c)
 	if (c == '\"')
 		line->status = NORMAL;
 	else if (c == '$')
-	{
-		(*tokens)->type = TEXT;
 		parse_env(tokens, line, env);
-	}
 	else if (c == '\\')
 	{
 		(*tokens)->type = TEXT;
-		(*tokens)->data[(*tokens)->len++] = line->data[++line->index];
+		(*tokens)->data[(*tokens)->len++] = (*(line->data))[++line->index];
 	}
 	else
 	{
@@ -185,7 +193,7 @@ void	parse_in_quotes(t_token **tokens, t_line *line, char c)
 	}
 }
 
-t_token	*parser(char *str, t_list **env)
+t_token	*parse_line(char **str, t_list **env)
 {
 	t_token		*tokens;
 	t_line		line;
@@ -193,16 +201,20 @@ t_token	*parser(char *str, t_list **env)
 	tokens = NULL;
 	line_init(&line, str);
 	start_tokens(&tokens, line.len);
-	while (line.data[line.index])
+	while ((*(line.data))[line.index])
 	{
 		if (line.status == NORMAL)
-			parse_normal(&tokens, &line, env, line.data[line.index]);
+			parse_normal(&tokens, &line, env, (*(line.data))[line.index]);
 		else if (line.status == IN_DQUOTES)
-			parse_in_dquotes(&tokens, &line, env, line.data[line.index]);
+			parse_in_dquotes(&tokens, &line, env, (*(line.data))[line.index]);
 		else if (line.status == IN_QUOTES)
-			parse_in_quotes(&tokens, &line, line.data[line.index]);
+			parse_in_quotes(&tokens, &line, (*(line.data))[line.index]);
+		if (line.status == SEMICOLON)
+			return (tokens);
 		line.index++;
 	}
+	free(*str);
+	*str = NULL;
 	//printf("g_ret = %d\n", g_ret);
 	return (tokens);
 }

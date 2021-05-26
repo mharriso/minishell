@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:24:34 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/25 22:47:21 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/26 18:09:02 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 #include "parser.h"
 #include "exit.h"
 
-void	line_init(t_line *line, char *str)
+void	line_init(t_line *line, char **str)
 {
 	line->data = str;
-	line->status = NORMAL; 
+	line->status = NORMAL;
 	line->index = 0;
-	line->len = ft_strlen(str) + 1;
+	line->len = ft_strlen(*str) + 1;
 }
 
 void	create_new_token(t_token **tokens, int len)

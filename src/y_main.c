@@ -70,13 +70,21 @@ int	main(int argc, char **argv, char **env)
 	aaa = argv;
 
 	lenv = env_create(env);
-	while(1)
-	{
-		ft_putstr_fd(YELLOW ARROW BLUE" msh"RESET SHELL" "DIAMOND" ", 1);
+	//while(1)
+	//{
+		//ft_putstr_fd(YELLOW ARROW BLUE" msh"RESET SHELL" "DIAMOND" ", 1);
+		ft_putstr_fd(PROMPT, 1);
 		get_next_line(0, &line);
-		tokens = parser(line, &lenv);
-		create_array(&tokens, token_lst_size(tokens));
-	}
+		while(line)
+		{
+			tokens = parse_line(&line, &lenv);
+			printf("line out = %s\n", line);
+			create_array(&tokens, token_lst_size(tokens));
+			clear_tokens(&tokens, free);
+
+
+		}
+	//}
 	ft_lstclear(&lenv, env_clear);
 	//sleep(20);
 	return (0);
