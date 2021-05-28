@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/26 20:01:09 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/28 19:25:33 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,17 @@
 #include "env_func.h"
 #include <string.h> //delete
 
-//static unsigned int g_ret;
+static unsigned int g_ret;
+
+void	exit_error(char *msg1,  char *msg2, int code)
+{
+	g_ret = code;
+	ft_putstr_fd(msg1, 2);
+	ft_putstr_fd(msg2, 2);
+	ft_putchar_fd('\n', 1);
+	exit(EXIT_FAILURE);
+
+}
 
 void	parse_redirect(t_token **tokens, t_line *line, char c)
 {
@@ -70,10 +80,24 @@ char *get_env_name(t_line *line)
 	name[i] = '\0';
 	return (name);
 }
+
+void	save_return_res(t_token **tokens)
+{
+	char	*str_ret;
+	char	*tmp;
+
+	str_ret = ft_itoa(g_ret);
+	tmp = ft_strjoin((*tokens)->data, str_ret);
+	free((*tokens)->data);
+	(*tokens)->data = tmp;
+	(*tokens)->len += ft_strlen(str_ret);
+}
+
 int	check_first_symbol(t_token **tokens, t_line *line, char c)
 {
 	int res;
 
+	res = ft_isalpha(c) || c == '_';
 	if(c == ' ' || c == '\0' || (c == '\"' && line->status == IN_DQUOTES))
 	{
 		(*tokens)->type = TEXT;
@@ -82,17 +106,12 @@ int	check_first_symbol(t_token **tokens, t_line *line, char c)
 	}
 	if(c == '\'' || c == '\"')
 		return (0);
-	res = ft_isalpha(c) || c == '_';
 	line->index++;
 	if(c == '?')
-	{
-		(*tokens)->data[(*tokens)->len++] = '!'; //example
-		return (0);
-	}
-	if(res)
+		save_return_res(tokens);
+	else if(res)
 		return (1);
 	return (0);
-
 }
 
 void parse_env(t_token **tokens, t_line *line, t_list **env)
@@ -123,6 +142,8 @@ void parse_env(t_token **tokens, t_line *line, t_list **env)
 void semicolon_handler(t_line *line)
 {
 	char *tmp;
+
+	if(line->index == 0)
 
 	line->status = SEMICOLON;
 	tmp = ft_strdup(*(line->data) + line->index + 1);
@@ -215,6 +236,18 @@ t_token	*parse_line(char **str, t_list **env)
 	}
 	free(*str);
 	*str = NULL;
-	//printf("g_ret = %d\n", g_ret);
 	return (tokens);
+}
+
+void	check_tokens(t_token *head)
+{
+	t_token	*prev;
+
+	prev = head;
+	while ((head = head->next))
+	{
+		if(prev->type != TEXT && head->type != TEXT)
+			exit_error(PROMPT": syntax error near unexpected token ", head->data, 258);
+		prev = head;
+	}
 }

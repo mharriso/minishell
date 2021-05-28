@@ -78,14 +78,18 @@ int	main(int argc, char **argv, char **env)
 		while(line)
 		{
 			tokens = parse_line(&line, &lenv);
-			printf("line out = %s\n", line);
 			create_array(&tokens, token_lst_size(tokens));
+			check_tokens(tokens);
+			//create_command_lst();
 			clear_tokens(&tokens, free);
-
-
 		}
 	//}
 	ft_lstclear(&lenv, env_clear);
 	//sleep(20);
+
+	// char *path;
+	// path = get_path_to_ms(argv[0]);
+	// printf("%s\n", path);
+
 	return (0);
 }

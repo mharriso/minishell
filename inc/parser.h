@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:08:45 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/26 19:08:53 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/28 19:58:43 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,9 @@ void	start_tokens(t_token **tokens, int len);
 int		token_lst_size(t_token *lst);
 void	clear_tokens(t_token **lst, void (*del)(void *));
 void	line_init(t_line *line, char **str);
+void	exit_error(char *msg1,  char *msg2, int code);
 void	*ft_realloc(void *ptr, size_t src_size, size_t new_size);
 
-
+void	check_tokens(t_token *head);
 
 #endif
