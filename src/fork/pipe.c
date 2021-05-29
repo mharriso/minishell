@@ -38,7 +38,6 @@ void	do_pipe(t_list *com_list, t_list **env)
 
 	int		status;
 	status = 0;
-
 	temp = com_list;
 	while (temp)
 	{

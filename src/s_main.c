@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 13:32:03 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/25 19:10:32 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/26 17:06:53 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,12 @@ t_list	*create_cmd()
 	char		**com;
 
 	com = malloc(sizeof(char*) * 2);
-	com[0] = ft_strdup("pwd");
+	com[0] = ft_strdup("aaa");
 	com[1] = NULL;
 	lst = ft_lstnew(com_create(com, NULL, PIPE_OUT));
 
 	com = malloc(sizeof(char*) * 2);
-	com[0] = ft_strdup("cat");
+	com[0] = ft_strdup("ls");
 	com[1] = NULL;
 	node = ft_lstnew(com_create(com, NULL, PIPE_IN));
 	ft_lstadd_back(&lst, node);
@@ -68,7 +68,6 @@ void ft_run(int argc, char **argv, char **envp)
 {
 	t_list	*env;
 	t_list	*cmd_list;
-	char *val;
 	int b;
 
 	b = argc;
