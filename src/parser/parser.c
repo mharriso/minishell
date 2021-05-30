@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/28 19:25:33 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/30 18:12:34 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,41 +20,16 @@
 
 static unsigned int g_ret;
 
-void	exit_error(char *msg1,  char *msg2, int code)
-{
-	g_ret = code;
-	ft_putstr_fd(msg1, 2);
-	ft_putstr_fd(msg2, 2);
-	ft_putchar_fd('\n', 1);
-	exit(EXIT_FAILURE);
-
-}
-
 void	parse_redirect(t_token **tokens, t_line *line, char c)
 {
 	if (c == '<')
-	{
-		create_new_token(tokens, 1);
-		(*tokens)->type =  RED_LEFT;
-		(*tokens)->data[(*tokens)->len++] = c;
-		create_new_token(tokens, line->len);
-	}
+		save_one(tokens, line, c, RED_LEFT);
 	else if (c == '>' && (*(line->data))[line->index + 1] == '>')
-	{
-		create_new_token(tokens, 2);
-		(*tokens)->type =  RED_DRIGHT;
-		(*tokens)->data[(*tokens)->len++] = c;
-		(*tokens)->data[(*tokens)->len++] = (*(line->data))[++line->index];
-		create_new_token(tokens, line->len);
-	}
+		save_twins(tokens, line, c, RED_DRIGHT);
 	else if (c == '>')
-	{
-		create_new_token(tokens, 1);
-		(*tokens)->type =  RED_RIGHT;
-		(*tokens)->data[(*tokens)->len++] = c;
-		create_new_token(tokens, line->len);
-	}
+		save_one(tokens, line, c, RED_RIGHT);
 }
+
 char *get_env_name(t_line *line)
 {
 	char	*name;
@@ -91,6 +66,7 @@ void	save_return_res(t_token **tokens)
 	free((*tokens)->data);
 	(*tokens)->data = tmp;
 	(*tokens)->len += ft_strlen(str_ret);
+	free(str_ret);
 }
 
 int	check_first_symbol(t_token **tokens, t_line *line, char c)
@@ -139,20 +115,25 @@ void parse_env(t_token **tokens, t_line *line, t_list **env)
 	(*tokens)->len += ft_strlen(value);
 }
 
-void semicolon_handler(t_line *line)
+void parse_separator(t_token **tokens, t_line *line, char c)
 {
-	char *tmp;
-
-	if(line->index == 0)
-
-	line->status = SEMICOLON;
-	tmp = ft_strdup(*(line->data) + line->index + 1);
-	free(*(line->data));
-	*(line->data) = tmp;
+	if (c == '|' && (*(line->data))[line->index + 1] == '|')
+		save_twins(tokens, line, c, OR);
+	else if (c == '|')
+		save_one(tokens, line, c, PIPE);
+	else if (c == '&' && (*(line->data))[line->index + 1] == '&')
+		save_twins(tokens, line, c, AND);
+	else if (c == ';')
+		save_one(tokens, line, c, SEMICOLON);
+	else if (c == '&')
+	{
+		(*tokens)->type = TEXT;
+		(*tokens)->data[(*tokens)->len++] = c;
+	}
 
 }
 
-void	parse_normal(t_token **tokens, t_line *line, t_list **env, char c)
+void	parse_normal(t_token **tokens, t_line *line, char c)
 {
 	if (c == '\"')
 		line->status = IN_DQUOTES;
@@ -162,45 +143,31 @@ void	parse_normal(t_token **tokens, t_line *line, t_list **env, char c)
 		parse_redirect(tokens, line, c);
 	else if (c == ' ' || c == '\t')
 		create_new_token(tokens, line->len);
-	else if (c == '|')
-	{
-		create_new_token(tokens, 1);
-		(*tokens)->type = PIPE;
-		(*tokens)->data[(*tokens)->len++] = c;
-		create_new_token(tokens, line->len);
-	}
-	else if (c == '$')
-		parse_env(tokens, line, env);
-	else if (c == ';')
-		semicolon_handler(line);
+	else if (c == ';' || c == '|' || c == '&')
+		parse_separator(tokens, line, c);
 	else if (c == '\\')
+		add_symbol(tokens, (*(line->data))[++line->index], TEXT);
+	else if (c == '$')
 	{
-		(*tokens)->type = TEXT;
-		(*tokens)->data[(*tokens)->len++] = (*(line->data))[++line->index];
+		if((*(line->data))[line->index + 1] != '\'' && \
+			(*(line->data))[line->index + 1] != '\"')
+			add_symbol(tokens, c, ENV);
 	}
 	else
-	{
-		(*tokens)->type = TEXT;
-		(*tokens)->data[(*tokens)->len++] = c;
-	}
+		add_symbol(tokens, c, TEXT);
 }
 
-void	parse_in_dquotes(t_token **tokens, t_line *line, t_list **env, char c)
+void	parse_in_dquotes(t_token **tokens, t_line *line, char c)
 {
 	if (c == '\"')
 		line->status = NORMAL;
 	else if (c == '$')
-		parse_env(tokens, line, env);
+		add_symbol(tokens, c, ENV);
 	else if (c == '\\')
-	{
-		(*tokens)->type = TEXT;
-		(*tokens)->data[(*tokens)->len++] = (*(line->data))[++line->index];
-	}
+		add_symbol(tokens, (*(line->data))[++line->index], TEXT);
 	else
-	{
-		(*tokens)->type = TEXT;
-		(*tokens)->data[(*tokens)->len++] = c;
-	}
+		add_symbol(tokens, c, TEXT);
+
 }
 
 void	parse_in_quotes(t_token **tokens, t_line *line, char c)
@@ -208,13 +175,10 @@ void	parse_in_quotes(t_token **tokens, t_line *line, char c)
 	if (c == '\'')
 		line->status = NORMAL;
 	else
-	{
-		(*tokens)->type = TEXT;
-		(*tokens)->data[(*tokens)->len++] = c;
-	}
+		add_symbol(tokens, c, TEXT);
 }
 
-t_token	*parse_line(char **str, t_list **env)
+t_token	*parse_line(char **str)
 {
 	t_token		*tokens;
 	t_line		line;
@@ -225,13 +189,11 @@ t_token	*parse_line(char **str, t_list **env)
 	while ((*(line.data))[line.index])
 	{
 		if (line.status == NORMAL)
-			parse_normal(&tokens, &line, env, (*(line.data))[line.index]);
+			parse_normal(&tokens, &line, (*(line.data))[line.index]);
 		else if (line.status == IN_DQUOTES)
-			parse_in_dquotes(&tokens, &line, env, (*(line.data))[line.index]);
+			parse_in_dquotes(&tokens, &line, (*(line.data))[line.index]);
 		else if (line.status == IN_QUOTES)
 			parse_in_quotes(&tokens, &line, (*(line.data))[line.index]);
-		if (line.status == SEMICOLON)
-			return (tokens);
 		line.index++;
 	}
 	free(*str);
@@ -239,15 +201,35 @@ t_token	*parse_line(char **str, t_list **env)
 	return (tokens);
 }
 
-void	check_tokens(t_token *head)
-{
-	t_token	*prev;
 
-	prev = head;
-	while ((head = head->next))
+void syntax_error(char *str)
+{
+	printf("%s: syntax error near unexpected token `%s'\n", PROMPT, str);
+	g_ret = 258;
+}
+
+void	check_tokens(t_token *last)
+{
+	t_token	*previous;
+
+	previous = last;
+	if(last->type < TEXT)
 	{
-		if(prev->type != TEXT && head->type != TEXT)
-			exit_error(PROMPT": syntax error near unexpected token ", head->data, 258);
-		prev = head;
+		syntax_error(last->data);
+		return ;
+	}
+	while ((last = last->prev))
+	{
+		if(previous->type < TEXT && last->type < TEXT)
+		{
+			syntax_error(last->data);
+			return ;
+		}
+		if(previous->type < SEMICOLON && last->type == EMPTY)
+		{
+			syntax_error(previous->data);
+			return ;
+		}
+		previous = last;
 	}
 }

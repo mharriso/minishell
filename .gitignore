@@ -55,3 +55,4 @@ dkms.conf
 
 #VSCode files
 launch.json
+test_main.c

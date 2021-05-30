@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:24:34 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/26 18:09:02 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/30 18:02:12 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void	create_new_token(t_token **tokens, int len)
 	new->type = EMPTY;
 	new->len = 0;
 	new->next = *tokens;
+	new->prev = NULL;
+	(*tokens)->prev = new;
 	*tokens = new;
 }
 
@@ -53,6 +55,7 @@ void	start_tokens(t_token **tokens, int len)
 	new->type = EMPTY;
 	new->len = 0;
 	new->next = *tokens;
+	new->prev = NULL;
 	*tokens = new;
 }
 
@@ -63,7 +66,7 @@ int	token_lst_size(t_token *lst)
 	i = 0;
 	while (lst)
 	{
-		lst = lst->next;
+		lst = lst->prev;
 		i++;
 	}
 	return (i);
@@ -77,12 +80,46 @@ void	clear_tokens(t_token **lst, void (*del)(void *))
 		return ;
 	while (*lst != NULL)
 	{
-		tmp = (*lst)->next;
+		tmp = (*lst)->prev;
 		if (del)
 			del((*lst)->data);
 		free(*lst);
 		*lst = tmp;
 	}
+}
+
+t_token *token_last(t_token *lst)
+{
+	if (!lst)
+	return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+
+void save_twins(t_token **tokens, t_line *line, char c, int type)
+{
+	create_new_token(tokens, 2);
+	(*tokens)->type =  type;
+	(*tokens)->data[(*tokens)->len++] = c;
+	(*tokens)->data[(*tokens)->len++] = (*(line->data))[++line->index];
+	create_new_token(tokens, line->len - line->index);
+}
+
+void save_one(t_token **tokens, t_line *line, char c, int type)
+{
+	create_new_token(tokens, 1);
+	(*tokens)->type = type;
+	(*tokens)->data[(*tokens)->len++] = c;
+	create_new_token(tokens, line->len - line->index);
+}
+
+void add_symbol(t_token **tokens, char c, int type)
+{
+	if((*tokens)->type == ENV)
+		type = ENV;
+	(*tokens)->type = type;
+	(*tokens)->data[(*tokens)->len++] = c;
 }
 
 void *ft_realloc(void *ptr, size_t src_size, size_t new_size)
