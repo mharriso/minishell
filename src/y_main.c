@@ -92,9 +92,12 @@ int	main(int argc, char **argv, char **env)
 	aaa = argv;
 	lenv = env_create(env);
 
-	ft_putstr_fd(PROMPT, 1);
-	get_next_line(0, &line);
-	parser(line, & lenv);
+	while (1)
+	{
+		ft_putstr_fd(PROMPT, 1);
+		get_next_line(0, &line);
+		parser(line, & lenv);
+	}
 
 	//sleep(20);
 	return (0);
