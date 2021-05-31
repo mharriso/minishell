@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:08:45 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/30 18:07:27 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/05/31 21:51:07 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #define IN_QUOTES 2
 #define IN_DQUOTES 3
 
+#define EMPTY 0
 #define RED_RIGHT 4
 #define RED_LEFT 5
 #define RED_DRIGHT 6
@@ -26,7 +27,7 @@
 #define SEMICOLON 10
 #define TEXT 11
 #define ENV 12
-#define EMPTY 13
+
 
 
 
@@ -70,6 +71,7 @@ t_token	*token_last(t_token *lst);
 void	save_twins(t_token **tokens, t_line *line, char c, int type);
 void	save_one(t_token **tokens, t_line *line, char c, int type);
 void	add_symbol(t_token **tokens, char c, int type);
+void	check_tokens(t_token *last);
 
 
 #endif

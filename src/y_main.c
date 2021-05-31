@@ -18,6 +18,46 @@
 #define DOLLAR GREEN"$"RESET
 #define DIAMOND "\U0001F538"
 
+static unsigned int g_ret;
+
+void syntax_error(char *str)
+{
+	printf("%s: syntax error near unexpected token `%s'\n", PROMPT, str);
+	g_ret = 258;
+}
+
+void	check_tokens(t_token *last)
+{
+	t_token	*previous;
+
+	previous = last;
+	if(last->type == SEMICOLON || last->type == PIPE)
+	{
+		syntax_error(last->data);
+		return ;
+	}
+	while ((last = last->prev))
+	{
+		if(previous->type < PIPE && last->type < TEXT)
+		{
+			syntax_error(previous->data);
+			return ;
+		}
+		if(previous->type == PIPE && last->type == EMPTY)
+		{
+			syntax_error(previous->data);
+			return ;
+		}
+		if(previous->type <= SEMICOLON && last->type == SEMICOLON)
+		{
+			syntax_error(previous->data);
+			return ;
+		}
+		previous = last;
+	}
+
+}
+
 char *type(int type) //delete
 {
 	if(type == EMPTY)
@@ -77,7 +117,7 @@ void	parser(char *line, t_list **env)
 	tokens = token_last(tokens);
 	//create_array(&tokens, token_lst_size(tokens));
 	check_tokens(tokens);
-	//create_command_lst();
+	//tokens_handler(tokens, env);
 	clear_tokens(&tokens, free);
 	ft_lstclear(env, env_clear);
 }
