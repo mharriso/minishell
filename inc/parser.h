@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:08:45 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/31 21:51:07 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/01 18:55:29 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 #define IN_DQUOTES 3
 
 #define EMPTY 0
-#define RED_RIGHT 4
-#define RED_LEFT 5
-#define RED_DRIGHT 6
+#define RED_RIGHT 1
+#define RED_LEFT 2
+#define RED_DRIGHT 3
 #define PIPE 7
 #define OR 8
 #define AND 9

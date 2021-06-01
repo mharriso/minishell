@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/31 22:18:25 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/01 18:18:48 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	parse_redirect(t_token **tokens, t_line *line, char c)
 		save_one(tokens, line, c, RED_RIGHT);
 }
 
-void parse_separator(t_token **tokens, t_line *line, char c)
+void	parse_separator(t_token **tokens, t_line *line, char c)
 {
 	if (c == '|' && (*(line->data))[line->index + 1] == '|')
 		save_twins(tokens, line, c, OR);
@@ -73,7 +73,13 @@ void	parse_in_dquotes(t_token **tokens, t_line *line, char c)
 	else if (c == '$')
 		add_symbol(tokens, c, ENV);
 	else if (c == '\\')
-		add_symbol(tokens, (*(line->data))[++line->index], TEXT);
+	{
+		if((*(line->data))[line->index + 1] == '\"' ||
+			(*(line->data))[line->index + 1] == '\\')
+			add_symbol(tokens, (*(line->data))[++line->index], TEXT);
+		else
+			add_symbol(tokens, c, TEXT);
+	}
 	else
 		add_symbol(tokens, c, TEXT);
 
