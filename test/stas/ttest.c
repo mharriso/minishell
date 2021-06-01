@@ -6,10 +6,8 @@
 
 #include <signal.h>
 
-# define RLK_LEFT_ARR     "\033[D"
-# define RLK_RIGHT_ARR    "\033[C"
-# define RLK_UP_ARR          "\033[A"
-# define RLK_DOWN_ARR     "\033[B"
+#define PROMPT "minishell: "
+#define PROMPT_SIZE 11
 
 #define BUF_SIZE 8
 
@@ -51,19 +49,24 @@ void tstr_free(t_string *str)
 	free(str);
 }
 
+void	tstr_resize(t_string *str, size_t len)
+{
+	char	*temp;
+
+	while ((len + str->pos) > str->len)
+			str->len <<= 1;
+	temp = str->str;
+	str->str = malloc(str->len + 1);
+	ft_memcpy(str->str, temp, str->pos + 1);
+	free(temp);
+}
+
 void	tstr_add_size(t_string *str, const char *src, size_t len)
 {
 	char	*temp;
 
 	if ((len + str->pos) > str->len)
-	{
-		while ((len + str->pos) > str->len)
-			str->len <<= 1;
-		temp = str->str;
-		str->str = malloc(str->len + 1);
-		ft_memcpy(str->str, temp, str->pos + 1);
-		free(temp);
-	}
+		tstr_resize(str, len);
 	ft_strlcat(str->str, src, len + str->pos + 1);
 	str->pos += len;
 }
@@ -76,6 +79,40 @@ void	tstr_add(t_string *str, const char *src)
 	tstr_add_size(str, src, len);
 }
 
+//return pointer to str at the start of src
+char*	tstr_insert_size(t_string *str, size_t pos, const char *src, size_t size)
+{
+	char *str_end;
+	size_t len;
+
+	if (pos == str->pos)
+	{
+		tstr_add_size(str, src, size);
+		return (NULL);
+	}
+	len = ft_strlen(str->str);
+	if ((len + size) > str->len)
+		tstr_resize(str, size);
+	while (len >= pos)
+	{
+		(str->str)[len + size] = (str->str)[len];
+		if (len == 0)
+			break ;
+		len--;
+	}
+	ft_memcpy(&((str->str)[pos]), src, size);
+	str->pos += size;
+	return (&((str->str)[pos]));
+}
+
+void	tstr_insert(t_string *str, size_t pos, const char *src)
+{
+	size_t	len;
+
+	len = ft_strlen(src);
+	tstr_insert_size(str, pos, src, len);
+}
+
 void	tstr_remove(t_string *str)
 {
 	if (str->pos < 1)
@@ -84,11 +121,37 @@ void	tstr_remove(t_string *str)
 	str->str[str->pos] = '\0';
 }
 
+void	tstr_remove_at(t_string *str, size_t pos)
+{
+	size_t	len;
+
+	if (pos == str->pos)
+	{
+		tstr_remove(str);
+		return ;
+	}
+	len = ft_strlen(&((str->str)[pos - 1]));
+	str->pos--;
+	ft_memcpy(&((str->str)[pos - 1]),&((str->str)[pos]), len);
+}
+
 int	ft_putchar(int c)
 {
 	int res;
 	res = write(1, &c, 1);
 	return (0);
+}
+
+void	clear_str(char *str, int size)
+{
+	int		i;
+
+	i = 0;
+	while (i < size)
+	{
+		str[i] = 0;
+		i++;
+	}
 }
 
 int	term_strcmp(const char *s1, const char *s2)
@@ -114,21 +177,87 @@ int	term_strcmp(const char *s1, const char *s2)
 	return (0);
 }
 
-void	term_del_char(t_string *str, size_t *pos)
+// void	term_cur_right_mr(int cols, size_t pos, size_t len)
+// {
+// 	int i;
+// 	int res;
+
+// 	if (((len + PROMPT_SIZE) % cols) == 0)
+// 	{
+// 		tputs(cursor_down, 1, ft_putchar);
+// 		tputs(cursor_up, 1, ft_putchar);
+// 		i = 0;
+// 		while (i < pos + PROMPT_SIZE + 6)
+// 		{
+// 			tputs(cursor_right, 1, ft_putchar);
+// 			i++;;
+// 		}
+// 	}
+// }
+
+void	term_cur_right_nl(int cols, size_t len, int is_write)
 {
-	if (pos)
+	if (((len + PROMPT_SIZE) % cols) == 0)
 	{
-		tstr_remove(str);
+		tputs(cursor_down, 1, ft_putchar);
+		while (cols > 0)
+		{
+			tputs(cursor_left, 1, ft_putchar);
+			cols--;
+		}
+	}
+	else if (!is_write)
+		tputs(cursor_right, 1, ft_putchar);
+}
+
+void	term_cur_left_ol(int cols, size_t pos)
+{
+	if (((pos + PROMPT_SIZE) % cols) == 0)
+	{
+		tputs(cursor_up, 1, ft_putchar);
+		while (cols > 0)
+		{
+			tputs(cursor_right, 1, ft_putchar);
+			cols--;
+		}
+	}
+	else
 		tputs(cursor_left, 1, ft_putchar);
+}
+
+void	term_del_char(t_string *str, size_t *pos, int cols)
+{
+	if (*pos)
+	{
+		tstr_remove_at(str, *pos);
+		term_cur_left_ol(cols, *pos);
 		tputs(delete_character, 1, ft_putchar);
 		(*pos)--;
 	}
 }
 
-void	term_write(const char *msg, t_string *str, size_t len)
+void	term_write( t_string *str, size_t *pos, t_string *buff, int cols)
 {
-	tstr_add_size(str, msg, len);
-	write(1, msg, len);
+	char	*end_part;
+	size_t	elen;
+
+	end_part = tstr_insert_size(str, *pos, buff->str, buff->len);
+	if (!end_part)
+	{
+		write(1, buff->str, buff->len);
+		term_cur_right_nl(cols, str->pos, 1);
+	}
+	else
+	{
+		ft_putstr_fd(end_part, 1);
+		elen = ft_strlen(end_part);
+		while (elen > 1)
+		{
+			term_cur_left_ol(cols, *pos);
+			elen--;
+		}
+	}
+	(*pos) += buff->len;
 }
 
 void	term_write_history(const char *msg, t_string *str, size_t *pos)
@@ -137,26 +266,40 @@ void	term_write_history(const char *msg, t_string *str, size_t *pos)
 
 	len = ft_strlen(msg);
 	str->pos = 0;
-	term_write(msg, str, len);
+	*(str->str) = '\0';
+	tstr_add_size(str, msg, len);
+	write(1, msg, len);
 	*pos = len;
 }
 
-void	clear_str(char *str, int size)
+void term_cur_left(t_string *str, size_t *pos, size_t *posr, int cols)
 {
-	int		i;
+	if (!(*pos))
+		return ;
+	term_cur_left_ol(cols, *pos);
+	(*pos)--;
+	(*posr)++;
+}
 
-	i = 0;
-	while (i < size)
-	{
-		str[i] = 0;
-		i++;
-	}
+void term_cur_right(t_string *str, size_t *pos, size_t *posr, int cols)
+{
+	if (!(*posr))
+		return ;
+	term_cur_right_nl(cols, *pos + 1, 0);
+	(*pos)++;
+	(*posr)--;
+}
+
+void	term_cur_vert( const char *str, t_string *line, size_t *pos)
+{
+	tputs(restore_cursor, 1, ft_putchar);
+	tputs(clr_eos, 1, ft_putchar);
+	term_write_history(str, line, pos);
 }
 
 int main()
 {
-	char buff[BUF_SIZE];
-	int len;
+	t_string *buf;
 	int res;
 	size_t pos;
 	size_t posr;
@@ -164,69 +307,50 @@ int main()
 	struct termios orig;
 	char *term_name;
 	t_string *line;
+	int i;
 
+	int cols;
+
+	buf = malloc(sizeof(t_string));
+	buf->str = malloc(BUF_SIZE);
+	buf->len = 0;
 	term_name = getenv("TERM");
 	if (tgetent(0, term_name) != 1)
 		exit(EXIT_FAILURE);
 	tcgetattr(0, &orig);
 	new = orig;
-	new.c_lflag &= ~(ECHO);
-	new.c_lflag &= ~(ICANON);
+	new.c_lflag &= ~(ECHO | ICANON);
 	new.c_cc[VMIN] = 1;
 	new.c_cc[VTIME] = 0;
 	tcsetattr(0, TCSANOW, &new);
+	cols = tgetnum("co");
 
 	line = tstr_create();
-	while(strcmp(buff, "\4"))
+	while(strcmp(buf->str, "\4"))
 	{
-		write(1, "minishell: ", 11);
+		write(1, PROMPT, PROMPT_SIZE);
 		tputs(save_cursor, 1, ft_putchar);
 		pos = 0;
 		posr = 0;
 		tstr_clear(line);
-		do
+		clear_str(buf->str, BUF_SIZE);
+		while (term_strcmp(buf->str, "\n") && (term_strcmp(buf->str, "\4") || pos))
 		{
-			clear_str(buff, BUF_SIZE);
-			len = read(0, buff, BUF_SIZE);
-			if (!term_strcmp(buff, key_up))
-			{
-				tputs(restore_cursor, 1, ft_putchar);
-				term_write_history("up", line, &pos);
-				tputs(clr_eol, 1, ft_putchar);
-			}
-			else if (!term_strcmp(buff, key_down))
-			{
-				tputs(restore_cursor, 1, ft_putchar);
-				term_write_history("down", line, &pos);
-				tputs(clr_eol, 1, ft_putchar);
-			}
-			else if (!term_strcmp(buff, key_left))
-			{
-				if (pos)
-				{
-					tputs(cursor_left, 1, ft_putchar);
-					pos--;
-					posr++;
-				}
-			}
-			else if (!term_strcmp(buff, key_right))
-			{
-				if (posr)
-				{
-					tputs(cursor_right, 1, ft_putchar);
-					pos++;
-					posr--;
-				}
-			}
-			else if (*buff == '\x7f')
-				term_del_char(line, &pos);
-			else if (ft_strcmp(buff, "\033"))
-			{
-				term_write(buff, line, len);
-				pos += len;
-			}
-		} while (term_strcmp(buff, "\n") && term_strcmp(buff, "\4"));
-		tstr_remove(line);
+			clear_str(buf->str, BUF_SIZE);
+			buf->len = read(0, buf->str, BUF_SIZE);
+			if (!term_strcmp(buf->str, key_up))
+				term_cur_vert("up", line, &pos);
+			else if (!term_strcmp(buf->str, key_down))
+				term_cur_vert("down", line, &pos);
+			else if (!term_strcmp(buf->str, key_left))
+				term_cur_left(line, &pos, &posr, cols);
+			else if (!term_strcmp(buf->str, key_right))
+				term_cur_right(line, &pos, &posr, cols);
+			else if (*buf->str == '\x7f' || !term_strcmp(buf->str, key_backspace))
+				term_del_char(line, &pos, cols);
+			else if (ft_strcmp(buf->str, "\033") && term_strcmp(buf->str, "\n") && term_strcmp(buf->str, "\4"))
+				term_write( line, &pos, buf, cols);
+		}
 		printf("\nline = |%s|\n", line->str);
 	}
 	tstr_free(line);
