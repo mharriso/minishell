@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 20:28:36 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/17 19:39:16 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/25 15:00:19 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,12 +83,14 @@ static int	is_env(char *str)
 }
 
 //argv must be null terminated, env - pointer to *env
-void	ft_export(char **argv, t_list **env)
+int	ft_export(char **argv, t_list **env)
 {
 	int		res;
+	int		ret;
 	t_env	new_e;
 	char	**temp;
 
+	ret = 0;
 	if (!*argv)
 	{
 		temp = env_listtoarr(*env);
@@ -119,7 +121,9 @@ void	ft_export(char **argv, t_list **env)
 		{
 			printf("export: not an identifier: %s\n", new_e.name);
 			free(new_e.name);
+			ret = 1;
 		}
 		argv++;
 	}
+	return (ret);
 }

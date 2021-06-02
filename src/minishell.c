@@ -1,35 +1,29 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/17 19:17:19 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/16 14:18:50 by tjuliean         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "env_func.h"
+#include "buildin.h"
+#include "ft_term.h"
 
 #include <stdlib.h>
-#include "struct.h"
-#include "buildin.h"
-#include "env_func.h"
 
-
-int main (int argc, char **argv, char **env)
+void ft_run(int argc, char **argv, char **envp)
 {
-	env = env_dup(env);
-	if (argc == 2)
-	{
-		ft_cd(argv[1]);
-	}
-	else if (argc == 3)
-	{
-		ft_export(argv + 1, &env);
-		ft_env((const char **)env);
-	}
-	else
-		ft_pwd();
-	free(env);
+	t_list	*env;
+
+	env = env_create(envp);
+
+	if (argc >= 1)
+		ft_term(argv[0], &env);
+
+	ft_lstclear(&env, env_clear);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	char **a;
+
+	a = malloc(sizeof(char *) * 2);
+	a[0] = ft_strdup("0");
+	a[1] = NULL;
+	ft_run(argc, argv,envp);
+	ft_exit(a);
 	return (0);
 }

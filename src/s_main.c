@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 13:32:03 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/24 15:16:12 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/02 16:21:42 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "fork.h"
 #include "com_func.h"
 #include "red_func.h"
+#include "ft_term.h"
 
 // static char	**fill_arg(int argc, char **argv)
 // {
@@ -51,12 +52,12 @@ t_list	*create_cmd()
 	char		**com;
 
 	com = malloc(sizeof(char*) * 2);
-	com[0] = ft_strdup("pwd");
+	com[0] = ft_strdup("aaa");
 	com[1] = NULL;
 	lst = ft_lstnew(com_create(com, NULL, PIPE_OUT));
 
 	com = malloc(sizeof(char*) * 2);
-	com[0] = ft_strdup("cat");
+	com[0] = ft_strdup("ls");
 	com[1] = NULL;
 	node = ft_lstnew(com_create(com, NULL, PIPE_IN));
 	ft_lstadd_back(&lst, node);
@@ -67,24 +68,29 @@ t_list	*create_cmd()
 void ft_run(int argc, char **argv, char **envp)
 {
 	t_list	*env;
-	t_list	*cmd_list;
-
-	char **a;
-	a = argv;
+	//t_list	*cmd_list;
 
 	env = env_create(envp);
 
 	if (argc >= 1)
 	{
-		cmd_list = create_cmd();
-		commands_handler(cmd_list, &env);
-		ft_lstclear(&cmd_list, com_clear);
+		//cmd_list = create_cmd();
+		//commands_handler(cmd_list, &env);
+		//ft_lstclear(&cmd_list, com_clear);
+		ft_term(argv[0], &env);
 	}
+
 	ft_lstclear(&env, env_clear);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
+	char **a;
+
+	a = malloc(sizeof(char *) * 2);
+	a[0] = ft_strdup("0");
+	a[1] = NULL;
 	ft_run(argc, argv,envp);
+	ft_exit(a);
 	return (0);
 }

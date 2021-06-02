@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 17:58:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/21 16:45:09 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/05/28 12:06:46 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,15 +133,13 @@ t_list	*env_create(char **env)
 	t_list	*list;
 	t_list	*node;
 	t_env	*content;
-	int		res;
 
 	list = NULL;
 	while (*env)
 	{
 		content = (t_env*)malloc(sizeof(t_env));
 		content->name = env_getname(*env);
-		res = ft_strcmp("OLDPWD", content->name);
-		if (res)
+		if (ft_strcmp("OLDPWD", content->name))
 			content->value = env_getvalue(*env);
 		else
 			content->value = NULL;
