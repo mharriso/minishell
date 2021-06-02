@@ -26,11 +26,11 @@ static void	fill_history_fd(t_dlist **dlst, int fd)
 	}
 }
 
-t_hisory	*history_init(char *pname, t_list **env)
+t_hisory	*history_init(const char *pname, t_list **env)
 {
 	t_hisory	*his;
-	char		*i;
 	char		*msh_lvl;
+	char		i;
 	int			fd;
 
 	his = malloc(sizeof(t_hisory));
@@ -46,6 +46,7 @@ t_hisory	*history_init(char *pname, t_list **env)
 		if (i != *msh_lvl)
 			free(his->fname);
 		fill_history_fd(&(his->begin), fd);
+		his->cur = his->begin;
 		close(fd);
 		i++;
 	}

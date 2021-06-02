@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 13:32:03 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/26 17:06:53 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/02 16:21:42 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "fork.h"
 #include "com_func.h"
 #include "red_func.h"
+#include "ft_term.h"
 
 // static char	**fill_arg(int argc, char **argv)
 // {
@@ -67,21 +68,16 @@ t_list	*create_cmd()
 void ft_run(int argc, char **argv, char **envp)
 {
 	t_list	*env;
-	t_list	*cmd_list;
-	int b;
-
-	b = argc;
-
-	char **a;
-	a = argv;
+	//t_list	*cmd_list;
 
 	env = env_create(envp);
 
 	if (argc >= 1)
 	{
-		cmd_list = create_cmd();
-		commands_handler(cmd_list, &env);
-		ft_lstclear(&cmd_list, com_clear);
+		//cmd_list = create_cmd();
+		//commands_handler(cmd_list, &env);
+		//ft_lstclear(&cmd_list, com_clear);
+		ft_term(argv[0], &env);
 	}
 
 	ft_lstclear(&env, env_clear);
@@ -89,6 +85,12 @@ void ft_run(int argc, char **argv, char **envp)
 
 int	main(int argc, char **argv, char **envp)
 {
+	char **a;
+
+	a = malloc(sizeof(char *) * 2);
+	a[0] = ft_strdup("0");
+	a[1] = NULL;
 	ft_run(argc, argv,envp);
+	ft_exit(a);
 	return (0);
 }

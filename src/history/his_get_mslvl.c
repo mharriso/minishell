@@ -1,4 +1,5 @@
 #include "buildin.h"
+#include "env_func.h"
 #include "exit.h"
 #include <stdio.h>
 

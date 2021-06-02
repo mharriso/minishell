@@ -3,6 +3,8 @@
 #include "history.h"
 #include <term.h>
 
+#include <stdio.h> //REMOVE!!!
+
 static t_string	*term_buf_init(void)
 {
 	t_string	*buf;
@@ -14,7 +16,7 @@ static t_string	*term_buf_init(void)
 	if (!buf->str)
 		exit(EXIT_FAILURE);
 	buf->len = 0;
-	clear_str(buf->str, BUF_SIZE);
+	term_clear_str(buf->str, BUF_SIZE);
 	return (buf);
 }
 
@@ -52,9 +54,9 @@ static void	term_keycode_handler(t_string *buf, t_string *line, \
 		term_cur_vert(his, line, &(pos->l));
 	}
 	else if (!term_strcmp(buf->str, key_left))
-		term_cur_left(line, &(pos->l), &(pos->r), pos->cols);
+		term_cur_left(&(pos->l), &(pos->r), pos->cols);
 	else if (!term_strcmp(buf->str, key_right))
-		term_cur_right(line, &(pos->l), &(pos->r), pos->cols);
+		term_cur_right(&(pos->l), &(pos->r), pos->cols);
 	else if (*buf->str == '\x7f' || !term_strcmp(buf->str, key_backspace))
 		term_del_char(line, &(pos->l), pos->cols);
 	else if (ft_strcmp(buf->str, "\033") && \
@@ -73,10 +75,11 @@ static void	term_line_handler(t_string *buf, t_string *line, \
 	pos.cols = tgetnum("co");
 	pos.l = 0;
 	pos.r = 0;
+	term_clear_str(buf->str, BUF_SIZE);
 	while (term_strcmp(buf->str, "\n") && \
 			(term_strcmp(buf->str, "\4") || pos.l))
 	{
-		clear_str(buf->str, BUF_SIZE);
+		term_clear_str(buf->str, BUF_SIZE);
 		buf->len = read(0, buf->str, BUF_SIZE);
 		term_keycode_handler(buf, line, &pos, his);
 	}
@@ -93,15 +96,17 @@ void	ft_term(char *pname, t_list **env)
 	buf = term_buf_init();
 	term_set_attr(&orig);
 	line = tstr_create();
-	while (strcmp(buf->str, "\4"))
+	while (term_strcmp(buf->str, "\4"))
 	{
 		term_line_handler(buf, line, history);
-		history_add(line->str, &(history->begin));
-		printf("\nline = |%s|\n", line->str); //parser
+		if (*(line->str))
+			history_add(line->str, &(history->begin));
+		history->cur = history->begin;
+		if (*(line->str))
+			printf("\nline = |%s|\n", line->str); //parser
 	}
 	tstr_free(line);
 	tstr_free(buf);
-	write(1, "\n", 1);
 	history_save(history->fname, history->begin); // in success_exit
 	history_free(history);
 	tcsetattr(0, TCSANOW, &orig); //  in success_exit

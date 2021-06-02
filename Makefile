@@ -34,7 +34,7 @@ SRC_DLST	=	dlist_f.c \
 				dlist_f2.c
 
 SRC_TSTR	=	tstr_init.c \
-				tstsr_edit.c
+				tstr_edit.c
 
 SRC_UTILS	=	check_long_long.c \
 				exit.c \
@@ -107,7 +107,7 @@ all: ${NAME}
 
 $(NAME): ${OBJECTS}
 	make bonus -C ${FT}
-	gcc -I ${INC} $(OBJECTS) -l ft -L ${FT} -o $(NAME)
+	gcc -I ${INC} $(OBJECTS) -ltermcap -l ft -L ${FT} -o $(NAME)
 
 %.o: %.c ${HFILES}
 	gcc ${FLAGS} -I ${INC} -c $< -o $@
@@ -127,7 +127,7 @@ norm:
 
 s_test: ${S_OBJECTS}
 	make bonus -C ${FT}
-	gcc -I ${INC} $(S_SOURCE) -g -l ft -L ${FT} -o ${S_NAME}
+	gcc -I ${INC} $(S_SOURCE) -g -ltermcap -l ft -L ${FT} -o ${S_NAME}
 s_clean:
 	make clean -C ${FT}
 	rm -f ${S_OBJECTS}
@@ -138,7 +138,7 @@ s_re: s_fclean s_test
 
 y_test: ${Y_OBJECTS}
 	make bonus -C ${FT}
-	gcc -I ${INC} $(Y_OBJECTS) -l ft -L ${FT} -o ${Y_NAME}
+	gcc -I ${INC} $(Y_OBJECTS) -ltermcap -l ft -L ${FT} -o ${Y_NAME}
 y_clean:
 	make clean -C ${FT}
 	rm -f ${Y_OBJECTS}

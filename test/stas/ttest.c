@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "libft.h"
-#include "history.h"
+//#include "history.h"
 
 #include <signal.h>
 
@@ -355,9 +355,9 @@ void	term_line_handler(t_string *buf, t_string *line, int cols)
 {
 	t_pos	pos;
 
-	write(1, PROMPT, PROMPT_SIZE);
-	tputs(save_cursor, 1, ft_putchar);
-	tstr_clear(line);
+	// write(1, PROMPT, PROMPT_SIZE);
+	// tputs(save_cursor, 1, ft_putchar);
+	// tstr_clear(line);
 
 	pos.l = 0;
 	pos.r = 0;
@@ -370,57 +370,57 @@ void	term_line_handler(t_string *buf, t_string *line, int cols)
 	}
 }
 
-void	minishell(char *pname, t_list **env)
-{
-	t_string		*buf;
-	t_string		*line;
-	t_hisory		*history;
-	struct termios	orig;
-	int				cols;
+// void	minishell(char *pname, t_list **env)
+// {
+// 	t_string		*buf;
+// 	t_string		*line;
+// 	t_hisory		*history;
+// 	struct termios	orig;
+// 	int				cols;
 
-	history = history_init(pname, env);
+// 	history = history_init(pname, env);
+// 	buf = term_buf_init();
+// 	term_set_attr(&orig);
+// 	cols = tgetnum("co");
+// 	line = tstr_create();
+// 	while(strcmp(buf->str, "\4"))
+// 	{
+// 		term_line_handler(buf, line, cols);
+// 		history_add(line->str, &(history->begin));
+// 		printf("\nline = |%s|\n", line->str); //parser
+// 	}
+// 	tstr_free(line);
+// 	tstr_free(buf);
+// 	write(1, "\n", 1);
+
+// 	history_save(history->fname, history->begin); // in success_exit
+// 	history_free(history);
+// 	tcsetattr(0, TCSANOW, &orig); //  in success_exit
+// }
+
+int main()
+{
+	t_string *buf;
+	struct termios orig;
+	t_string *line;
+	int cols;
+
 	buf = term_buf_init();
 	term_set_attr(&orig);
 	cols = tgetnum("co");
 	line = tstr_create();
 	while(strcmp(buf->str, "\4"))
 	{
+		write(1, PROMPT, PROMPT_SIZE);
+		tputs(save_cursor, 1, ft_putchar);
+		tstr_clear(line);
+		clear_str(buf->str, BUF_SIZE);
 		term_line_handler(buf, line, cols);
-		history_add(line->str, &(history->begin));
-		printf("\nline = |%s|\n", line->str); //parser
+		printf("\nline = |%s|\n", line->str);
 	}
 	tstr_free(line);
-	tstr_free(buf);
 	write(1, "\n", 1);
-
-	history_save(history->fname, history->begin); // in success_exit
-	history_free(history);
-	tcsetattr(0, TCSANOW, &orig); //  in success_exit
-}
-
-int main()
-{
-	// t_string *buf;
-	// struct termios orig;
-	// t_string *line;
-	// int cols;
-
-	// buf = term_buf_init();
-	// term_set_attr(&orig);
-	// cols = tgetnum("co");
-	// line = tstr_create();
-	// while(strcmp(buf->str, "\4"))
-	// {
-	// 	write(1, PROMPT, PROMPT_SIZE);
-	// 	tputs(save_cursor, 1, ft_putchar);
-	// 	tstr_clear(line);
-	// 	clear_str(buf->str, BUF_SIZE);
-	// 	term_line_handler(buf, line, cols);
-	// 	printf("\nline = |%s|\n", line->str);
-	// }
-	// tstr_free(line);
-	// write(1, "\n", 1);
-	// tcsetattr(0, TCSANOW, &orig);
-	minishell(argv[0],);
+	tcsetattr(0, TCSANOW, &orig);
+	//minishell(argv[0],);
 	return (0);
 }

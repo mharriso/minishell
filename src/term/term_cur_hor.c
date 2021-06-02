@@ -33,7 +33,7 @@ void	term_cur_left_ol(int cols, size_t pos)
 		tputs(cursor_left, 1, term_putchar);
 }
 
-void	term_cur_left(t_string *str, size_t *pos, size_t *posr, int cols)
+void	term_cur_left(size_t *pos, size_t *posr, int cols)
 {
 	if (!(*pos))
 		return ;
@@ -42,7 +42,7 @@ void	term_cur_left(t_string *str, size_t *pos, size_t *posr, int cols)
 	(*posr)++;
 }
 
-void	term_cur_right(t_string *str, size_t *pos, size_t *posr, int cols)
+void	term_cur_right(size_t *pos, size_t *posr, int cols)
 {
 	if (!(*posr))
 		return ;

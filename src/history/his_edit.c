@@ -30,19 +30,22 @@ char	*history_down_arrow(t_dlist **cur_history)
 	return (his_line);
 }
 
-void	history_add(char *content, t_dlist **history)
+void	history_add(const char *content, t_dlist **history)
 {
 	t_dlist	*node;
 
+	if (!history || !*history || !(*history)->content || !content)
+		return ;
+	if (!ft_strcmp((*history)->content, content))
+		return ;
 	node = ft_dlstnew(ft_strdup(content));
 	if (!node)
 		error_exit("history_add");
 	ft_dlstadd_front(history, node);
 }
 
-void	history_save(char *fname, t_dlist *history)
+void	history_save(const char *fname, t_dlist *history)
 {
-	char	*line;
 	int		fd;
 
 	fd = open(fname, O_WRONLY | O_CREAT | O_TRUNC);

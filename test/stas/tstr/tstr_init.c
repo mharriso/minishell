@@ -20,8 +20,7 @@ t_string	*tstr_create(void)
 	string = malloc(sizeof(t_string));
 	if (!string)
 		return (NULL);
-	if (tstr_init(string))
-		return (NULL);
+	tstr_init(string);
 	return (string);
 }
 

@@ -51,11 +51,14 @@ char	*history_get_fname(char term_num, const char *pname)
 {
 	char	*str;
 	char	*temp;
+	char	tn[2];
 
 	str = get_abs_path(pname);
 	temp = ft_strjoin(str, HISTORY_FNAME);
 	free(str);
-	str = ft_strjoin(temp, &term_num);
+	tn[0] = term_num;
+	tn[1] = '\0';
+	str = ft_strjoin(temp, tn);
 	free(temp);
 	return (str);
 }
