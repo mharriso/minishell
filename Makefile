@@ -42,7 +42,8 @@ SRC_FORK	=	redirect.c \
 				pipe.c
 
 SRC_PARSER	=	parser.c \
-				parser_utils.c
+				parser_utils.c \
+				tokens_handler.c 
 
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(BUILDIN)/, $(SRC_BUILDIN)) \

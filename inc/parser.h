@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:08:45 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/01 18:55:29 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/02 20:23:11 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 #define IN_DQUOTES 3
 
 #define EMPTY 0
-#define RED_RIGHT 1
-#define RED_LEFT 2
-#define RED_DRIGHT 3
+// #define RED_RIGHT 1
+// #define RED_LEFT 2
+// #define RED_DRIGHT 3
 #define PIPE 7
 #define OR 8
 #define AND 9
@@ -72,6 +72,8 @@ void	save_twins(t_token **tokens, t_line *line, char c, int type);
 void	save_one(t_token **tokens, t_line *line, char c, int type);
 void	add_symbol(t_token **tokens, char c, int type);
 void	check_tokens(t_token *last);
+void	tokens_handler(t_token **tokens, t_list **env);
+
 
 
 #endif

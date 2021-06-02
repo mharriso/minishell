@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/01 18:18:48 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/02 20:20:13 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 #include "exit.h"
 #include "parser.h"
 #include "env_func.h"
+#include "com_func.h"
+#include "red_func.h"
+#include "structs.h"
 
 void	parse_redirect(t_token **tokens, t_line *line, char c)
 {

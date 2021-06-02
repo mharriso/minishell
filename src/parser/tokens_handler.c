@@ -8,7 +8,7 @@
 #include "red_func.h"
 #include "structs.h"
 
-static unsigned int g_ret;
+//static unsigned int g_ret;
 
 typedef struct s_count
 {
@@ -41,85 +41,85 @@ typedef struct s_count
 // 	return (name);
 // }
 
-void	create_ret_str(t_token **tokens)
-{
-	char	*str_ret;
-	char	*tmp;
+// void	create_ret_str(t_token **tokens)
+// {
+// 	char	*str_ret;
+// 	char	*tmp;
 
-	str_ret = ft_itoa(g_ret);
-	tmp = ft_strjoin((*tokens)->data, str_ret);
-	free((*tokens)->data);
-	(*tokens)->data = tmp;
-	(*tokens)->len += ft_strlen(str_ret);
-	free(str_ret);
-}
+// 	str_ret = ft_itoa(g_ret);
+// 	tmp = ft_strjoin((*tokens)->data, str_ret);
+// 	free((*tokens)->data);
+// 	(*tokens)->data = tmp;
+// 	(*tokens)->len += ft_strlen(str_ret);
+// 	free(str_ret);
+// }
 
-char	*create_env_str(t_token *tokens, t_list **env)
-{
-	char	*name;
-	char	*value;
-	char	*str;
-	int		i;
-
-
-	str = malloc(tokens->len + 1);
-	if(!str)
-		error_exit("malloc error");
-	i = 0;
-	while(*(tokens->data))
-	{
-		str[i] = *(tokens->data);
-	}
-
-	if(*(tokens->data) == '?');
-		value = ft_itoa(g_ret);
+// char	*create_env_str(t_token *tokens, t_list **env)
+// {
+// 	char	*name;
+// 	char	*value;
+// 	char	*str;
+// 	int		i;
 
 
-	name = get_env_name(tokens->data);
-	value = env_getvaluebyname(name, *env);
-	free(name);
+// 	str = malloc(tokens->len + 1);
+// 	if(!str)
+// 		error_exit("malloc error");
+// 	i = 0;
+// 	while(*(tokens->data))
+// 	{
+// 		str[i] = *(tokens->data);
+// 	}
 
-}
+// 	if(*(tokens->data) == '?');
+// 		value = ft_itoa(g_ret);
 
 
-char	*create_str(t_token *tokens)
-{
-	char	*str;
+// 	name = get_env_name(tokens->data);
+// 	value = env_getvaluebyname(name, *env);
+// 	free(name);
 
-	str = malloc(tokens->len + 1);
-	ft_memcpy(str, tokens->data, tokens->len + 1);
-	return (str);
-}
-char	**create_com_array(t_token **tokens, t_list **env)
-{
-	char	**array;
-	size_t	size;
+// }
 
-	size = 0;
-	while ((*tokens) && (*tokens)->type > TEXT)
-	{
-		size++;
-		*tokens = (*tokens)->prev;
-	}
-	array = malloc((size + 1) * sizeof(char *));
-	if(!size || array)
-		return(NULL);
-	array[size] = NULL;
-	while (size)
-	{
-		if((*tokens)->type == TEXT)
-			array[--size] = create_str(*tokens);
-		// else if((*tokens)->type == ENV)
-		// 	array[--size] = create_env_str(*tokens, env);
-		*tokens = (*tokens)->next;
-	}
-	return (array);
 
-}
+// char	*create_str(t_token *tokens)
+// {
+// 	char	*str;
+
+// 	str = malloc(tokens->len + 1);
+// 	ft_memcpy(str, tokens->data, tokens->len + 1);
+// 	return (str);
+// }
+// char	**create_com_array(t_token **tokens, t_list **env)
+// {
+// 	char	**array;
+// 	size_t	size;
+
+// 	size = 0;
+// 	while ((*tokens) && (*tokens)->type > TEXT)
+// 	{
+// 		size++;
+// 		*tokens = (*tokens)->prev;
+// 	}
+// 	array = malloc((size + 1) * sizeof(char *));
+// 	if(!size || array)
+// 		return(NULL);
+// 	array[size] = NULL;
+// 	while (size)
+// 	{
+// 		if((*tokens)->type == TEXT)
+// 			array[--size] = create_str(*tokens);
+// 		// else if((*tokens)->type == ENV)
+// 		// 	array[--size] = create_env_str(*tokens, env);
+// 		*tokens = (*tokens)->next;
+// 	}
+// 	return (array);
+
+// }
 
 t_list	*create_com_lst(t_token **tokens, t_list **env)
 {
-	int	pipe_type;
+	int			pipe_type;
 	t_redir		*red;
 	t_list		*node;
 	t_command	*cmd;
@@ -134,7 +134,8 @@ t_list	*create_com_lst(t_token **tokens, t_list **env)
 
 	pipe_type = 0;
 	list_to_return = NULL;
-	while(*tokens && ((*tokens)->type =! SEMICOLON))
+	env = NULL;   //delete!!!
+	while(*tokens && ((*tokens)->type != SEMICOLON))
 	{
 		temp = *tokens;
 		rsize = 0;
@@ -144,6 +145,7 @@ t_list	*create_com_lst(t_token **tokens, t_list **env)
 				rsize++;
 			temp = temp->prev;
 		}
+		printf("RED SIZE = %d\n", rsize);
 		if (rsize)
 		{
 			red = malloc(sizeof(t_redir) * rsize + 1);
@@ -184,6 +186,11 @@ t_list	*create_com_lst(t_token **tokens, t_list **env)
 				pipe_type &= ~PIPE_OUT;
 
 			cmd = com_create(com_array, red, pipe_type);
+
+			printf("COMMANDS ARRAY\n");
+			for (size_t k = 0; com_array[k]; k++)
+				printf("%s\n", com_array[k]);
+
 			node = ft_lstnew(cmd);
 			ft_lstadd_back(&list_to_return, node);
 		}
@@ -219,6 +226,8 @@ t_list	*create_com_lst(t_token **tokens, t_list **env)
 			ft_lstadd_back(&list_to_return, node);
 		}
 	}
+
+
 	return (list_to_return);
 }
 
@@ -230,7 +239,11 @@ void	tokens_handler(t_token **tokens, t_list **env)
 	{
 		//get_env()
 		commands = create_com_lst(tokens, env);
-		commands_handler(commands, env);
+		printf("lst OK\n");
+		if(commands)
+			commands_handler(commands, env);
+		printf("com OK\n");
+
 
 		if (*tokens && (*tokens)->prev)
 		{

@@ -3,6 +3,7 @@
 #include "libft.h"
 #include "parser.h"
 #include "env_func.h"
+#include "structs.h"
 
 #include "exit.h"
 #include "env_func.h"
@@ -117,7 +118,7 @@ void	parser(char *line, t_list **env)
 	tokens = token_last(tokens);
 	create_array(&tokens, token_lst_size(tokens));
 	check_tokens(tokens);
-	//tokens_handler(&tokens, env);
+	tokens_handler(&tokens, env);
 	clear_tokens(&tokens, free);
 	ft_lstclear(env, env_clear);
 }
