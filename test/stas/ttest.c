@@ -3,13 +3,20 @@
 #include <string.h>
 #include <stdio.h>
 #include "libft.h"
+#include "history.h"
 
 #include <signal.h>
 
 #define PROMPT "minishell: "
 #define PROMPT_SIZE 11
-
 #define BUF_SIZE 8
+
+typedef struct s_pos
+{
+	size_t	l;
+	size_t	r;
+}				t_pos;
+
 
 typedef struct	s_string
 {
@@ -243,10 +250,7 @@ void	term_write( t_string *str, size_t *pos, t_string *buff, int cols)
 
 	end_part = tstr_insert_size(str, *pos, buff->str, buff->len);
 	if (!end_part)
-	{
 		write(1, buff->str, buff->len);
-		term_cur_right_nl(cols, str->pos, 1);
-	}
 	else
 	{
 		ft_putstr_fd(end_part, 1);
@@ -272,7 +276,7 @@ void	term_write_history(const char *msg, t_string *str, size_t *pos)
 	*pos = len;
 }
 
-void term_cur_left(t_string *str, size_t *pos, size_t *posr, int cols)
+void	term_cur_left(t_string *str, size_t *pos, size_t *posr, int cols)
 {
 	if (!(*pos))
 		return ;
@@ -281,7 +285,7 @@ void term_cur_left(t_string *str, size_t *pos, size_t *posr, int cols)
 	(*posr)++;
 }
 
-void term_cur_right(t_string *str, size_t *pos, size_t *posr, int cols)
+void	term_cur_right(t_string *str, size_t *pos, size_t *posr, int cols)
 {
 	if (!(*posr))
 		return ;
@@ -297,64 +301,126 @@ void	term_cur_vert( const char *str, t_string *line, size_t *pos)
 	term_write_history(str, line, pos);
 }
 
-int main()
+t_string *term_buf_init()
 {
 	t_string *buf;
-	int res;
-	size_t pos;
-	size_t posr;
-	struct termios new;
-	struct termios orig;
-	char *term_name;
-	t_string *line;
-	int i;
-
-	int cols;
 
 	buf = malloc(sizeof(t_string));
+	if (!buf)
+		exit(EXIT_FAILURE);
 	buf->str = malloc(BUF_SIZE);
+	if (!buf->str)
+		exit(EXIT_FAILURE);
 	buf->len = 0;
+	clear_str(buf->str, BUF_SIZE);
+	return (buf);
+}
+
+void term_set_attr(struct termios *orig)
+{
+	char			*term_name;
+	struct termios	new;
+
 	term_name = getenv("TERM");
 	if (tgetent(0, term_name) != 1)
 		exit(EXIT_FAILURE);
-	tcgetattr(0, &orig);
-	new = orig;
+	if (tcgetattr(0, orig))
+		exit(EXIT_FAILURE);
+	new = *orig;
 	new.c_lflag &= ~(ECHO | ICANON);
 	new.c_cc[VMIN] = 1;
 	new.c_cc[VTIME] = 0;
-	tcsetattr(0, TCSANOW, &new);
-	cols = tgetnum("co");
+	if (tcsetattr(0, TCSANOW, &new))
+		exit(EXIT_FAILURE);
+}
 
+void	term_keycode_handler(t_string *buf, t_string *line, int cols, t_pos *pos)
+{
+	if (!term_strcmp(buf->str, key_up))
+		term_cur_vert("up", line, &(pos->l));
+	else if (!term_strcmp(buf->str, key_down))
+		term_cur_vert("down", line, &(pos->l));
+	else if (!term_strcmp(buf->str, key_left))
+		term_cur_left(line, &(pos->l), &(pos->r), cols);
+	else if (!term_strcmp(buf->str, key_right))
+		term_cur_right(line, &(pos->l), &(pos->r), cols);
+	else if (*buf->str == '\x7f' || !term_strcmp(buf->str, key_backspace))
+		term_del_char(line, &(pos->l), cols);
+	else if (ft_strcmp(buf->str, "\033") && \
+			term_strcmp(buf->str, "\n") && term_strcmp(buf->str, "\4"))
+		term_write( line, &(pos->l), buf, cols);
+}
+
+void	term_line_handler(t_string *buf, t_string *line, int cols)
+{
+	t_pos	pos;
+
+	write(1, PROMPT, PROMPT_SIZE);
+	tputs(save_cursor, 1, ft_putchar);
+	tstr_clear(line);
+
+	pos.l = 0;
+	pos.r = 0;
+	while (term_strcmp(buf->str, "\n") && \
+			(term_strcmp(buf->str, "\4") || pos.l))
+	{
+		clear_str(buf->str, BUF_SIZE);
+		buf->len = read(0, buf->str, BUF_SIZE);
+		term_keycode_handler(buf, line, cols, &pos);
+	}
+}
+
+void	minishell(char *pname, t_list **env)
+{
+	t_string		*buf;
+	t_string		*line;
+	t_hisory		*history;
+	struct termios	orig;
+	int				cols;
+
+	history = history_init(pname, env);
+	buf = term_buf_init();
+	term_set_attr(&orig);
+	cols = tgetnum("co");
 	line = tstr_create();
 	while(strcmp(buf->str, "\4"))
 	{
-		write(1, PROMPT, PROMPT_SIZE);
-		tputs(save_cursor, 1, ft_putchar);
-		pos = 0;
-		posr = 0;
-		tstr_clear(line);
-		clear_str(buf->str, BUF_SIZE);
-		while (term_strcmp(buf->str, "\n") && (term_strcmp(buf->str, "\4") || pos))
-		{
-			clear_str(buf->str, BUF_SIZE);
-			buf->len = read(0, buf->str, BUF_SIZE);
-			if (!term_strcmp(buf->str, key_up))
-				term_cur_vert("up", line, &pos);
-			else if (!term_strcmp(buf->str, key_down))
-				term_cur_vert("down", line, &pos);
-			else if (!term_strcmp(buf->str, key_left))
-				term_cur_left(line, &pos, &posr, cols);
-			else if (!term_strcmp(buf->str, key_right))
-				term_cur_right(line, &pos, &posr, cols);
-			else if (*buf->str == '\x7f' || !term_strcmp(buf->str, key_backspace))
-				term_del_char(line, &pos, cols);
-			else if (ft_strcmp(buf->str, "\033") && term_strcmp(buf->str, "\n") && term_strcmp(buf->str, "\4"))
-				term_write( line, &pos, buf, cols);
-		}
-		printf("\nline = |%s|\n", line->str);
+		term_line_handler(buf, line, cols);
+		history_add(line->str, &(history->begin));
+		printf("\nline = |%s|\n", line->str); //parser
 	}
 	tstr_free(line);
+	tstr_free(buf);
 	write(1, "\n", 1);
-	tcsetattr(0, TCSANOW, &orig);
+
+	history_save(history->fname, history->begin); // in success_exit
+	history_free(history);
+	tcsetattr(0, TCSANOW, &orig); //  in success_exit
+}
+
+int main()
+{
+	// t_string *buf;
+	// struct termios orig;
+	// t_string *line;
+	// int cols;
+
+	// buf = term_buf_init();
+	// term_set_attr(&orig);
+	// cols = tgetnum("co");
+	// line = tstr_create();
+	// while(strcmp(buf->str, "\4"))
+	// {
+	// 	write(1, PROMPT, PROMPT_SIZE);
+	// 	tputs(save_cursor, 1, ft_putchar);
+	// 	tstr_clear(line);
+	// 	clear_str(buf->str, BUF_SIZE);
+	// 	term_line_handler(buf, line, cols);
+	// 	printf("\nline = |%s|\n", line->str);
+	// }
+	// tstr_free(line);
+	// write(1, "\n", 1);
+	// tcsetattr(0, TCSANOW, &orig);
+	minishell(argv[0],);
 	return (0);
 }

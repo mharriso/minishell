@@ -1,6 +1,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include "history.h"
+#include "history_utils.h"
 #include "exit.h"
 
 static void	fill_history_fd(t_dlist **dlst, int fd)
@@ -49,4 +50,11 @@ t_hisory	*history_init(char *pname, t_list **env)
 		i++;
 	}
 	return (his);
+}
+
+void	history_free(t_hisory *history)
+{
+	ft_dlstclear(&(history->begin), free);
+	free(history->fname);
+	free(history);
 }

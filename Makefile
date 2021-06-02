@@ -6,6 +6,10 @@ INC		=	inc
 UTILS	=	utils
 PARSER	=	parser
 FORK	=	fork
+HISTORY	=	history
+TERM	=	term
+DLST	=	dlist
+TSTR	=	tstr
 
 HEADER	=	buildin.h \
 			exit.h \
@@ -16,9 +20,21 @@ HEADER	=	buildin.h \
 			fork.h \
 			com_func.h \
 			red_func.h \
-			parser.h
+			parser.h \
+			dlist.h \
+			tstr.h \
+			ft_term.h \
+			term_utils.h \
+			history.h \
+			history_utils.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
+
+SRC_DLST	=	dlist_f.c \
+				dlist_f2.c
+
+SRC_TSTR	=	tstr_init.c \
+				tstsr_edit.c
 
 SRC_UTILS	=	check_long_long.c \
 				exit.c \
@@ -26,7 +42,9 @@ SRC_UTILS	=	check_long_long.c \
 				get_full_path.c \
 				com_func.c \
 				red_func.c\
-				commands_handler.c
+				commands_handler.c \
+				$(addprefix $(DLST)/, $(SRC_DLST)) \
+				$(addprefix $(TSTR)/, $(SRC_TSTR))
 
 SRC_BUILDIN	=	ft_pwd.c \
 				ft_cd.c \
@@ -44,10 +62,23 @@ SRC_FORK	=	redirect.c \
 SRC_PARSER	=	parser.c \
 				parser_utils.c
 
+SRC_HISTORY	=	his_edit.c \
+				his_get_fname.c \
+				his_get_mslvl.c \
+				his_init.c
+
+SRC_TERM	=	ft_term.c \
+				term_cur_hor.c \
+				term_cur_vert.c \
+				term_write.c \
+				utils.c
+
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(BUILDIN)/, $(SRC_BUILDIN)) \
 			$(addprefix $(FORK)/, $(SRC_FORK)) \
-			$(addprefix $(PARSER)/, $(SRC_PARSER))
+			$(addprefix $(PARSER)/, $(SRC_PARSER)) \
+			$(addprefix $(HISTORY)/, $(SRC_HISTORY)) \
+			$(addprefix $(TERM)/, $(SRC_TERM))
 
 SOURCES	= $(addprefix $(SRC)/, $(SRC_F))
 
