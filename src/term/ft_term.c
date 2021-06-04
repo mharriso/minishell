@@ -50,7 +50,7 @@ static void	term_keycode_handler(t_string *buf, t_string *line, \
 	}
 	else if (!term_strcmp(buf->str, key_down))
 	{
-		his = history_down_arrow(&(history->cur));
+		his = history_down_arrow(&(history->cur), line->str);
 		term_cur_vert(his, line, &(pos->l));
 	}
 	else if (!term_strcmp(buf->str, key_left))
@@ -102,6 +102,7 @@ void	ft_term(char *pname, t_list **env)
 		if (*(line->str))
 			history_add(line->str, &(history->begin));
 		history->cur = history->begin;
+		write(1, "\n", 1);
 		if (*(line->str))
 			printf("\nline = |%s|\n", line->str); //parser
 	}
