@@ -8,88 +8,96 @@
 #include "red_func.h"
 #include "structs.h"
 
-//static unsigned int g_ret;
+static unsigned int g_ret;
 
-typedef struct s_count
+typedef struct s_str
 {
-	int red;
-	int com;
-}				t_count;
+	char		*data;
+	size_t		len;
+}				t_str;
 
-// char *get_env_name(t_token *tokens)
-// {
-// 	char	*name;
-// 	char	c;
-// 	int		res;
-// 	int		i;
+char *get_env_name(char	**src)
+{
+	char	*name;
+	int		i;
 
-// 	name = malloc(tokens->len);
-// 	if(!name)
-// 		error_exit("malloc error");
-// 	c = (*(line->data))[line->index];
-// 	i = 0;
-// 	while(1)
-// 	{
-// 		res = ft_isalnum(c) || c == '_';
-// 		if(!c || !res)
-// 			break ;
-// 		name[i] = c;
-// 		c = (*(line->data))[++line->index];
-// 		i++;
-// 	}
-// 	name[i] = '\0';
-// 	return (name);
-// }
+	name = malloc(100); // FIX
+	if(!name)
+		error_exit("malloc error");
+	i = 0;
+	while(ft_isalnum(**src) || **src == '_')
+	{
+		name[i] = **src;
+		(*src)++;
+		i++;
+	}
+	name[i] = '\0';
+	return (name);
+}
 
-// void	create_ret_str(t_token **tokens)
-// {
-// 	char	*str_ret;
-// 	char	*tmp;
+void		add_env_value(t_str *str, char **src, t_list **env)
+{
+	char	*name;
+	char	*value;
+	size_t	value_len;
 
-// 	str_ret = ft_itoa(g_ret);
-// 	tmp = ft_strjoin((*tokens)->data, str_ret);
-// 	free((*tokens)->data);
-// 	(*tokens)->data = tmp;
-// 	(*tokens)->len += ft_strlen(str_ret);
-// 	free(str_ret);
-// }
-
-// char	*create_env_str(t_token *tokens, t_list **env)
-// {
-// 	char	*name;
-// 	char	*value;
-// 	char	*str;
-// 	int		i;
-
-
-// 	str = malloc(tokens->len + 1);
-// 	if(!str)
-// 		error_exit("malloc error");
-// 	i = 0;
-// 	while(*(tokens->data))
-// 	{
-// 		str[i] = *(tokens->data);
-// 	}
-
-// 	if(*(tokens->data) == '?');
-// 		value = ft_itoa(g_ret);
+	value = NULL;
+	if(**src == '?')
+	{
+		value = ft_itoa(g_ret);
+		if(!value)
+			error_exit("malloc error");
+	}
+	else if(ft_isalpha(**src) || **src == '_')
+	{
+		name = get_env_name(src);
+		value = ft_strdup(env_getvaluebyname(name, *env));
+		//printf("name = |%s| value = %s\n", name, value);
+		free(name);
+	}
+	if(value)
+	{
+		value_len = ft_strlen(value);
+		str->data = ft_realloc(str->data, str->len, str->len + value_len + 1);
+		str->len += value_len + 1;
+		ft_memcpy(str->data, value, value_len);
+	}
+}
 
 
-// 	name = get_env_name(tokens->data);
-// 	value = env_getvaluebyname(name, *env);
-// 	free(name);
 
-// }
+char	*create_env_str(char *src, t_list **env)
+{
+	t_str	str;
+	char	*dollar;
+	int		part_len;
+
+	dollar = ft_strchr(src, '$');
+	str.data = ft_strdup("");
+	str.len = 0;
+	while(dollar)
+	{
+		part_len = dollar - src;
+		str.data = ft_realloc(str.data, str.len, str.len + part_len + 1);
+		str.len += part_len;
+		ft_memcpy(str.data, src, part_len);
+		src = dollar + 1;
+		add_env_value(&str, &src, env);
+		dollar = ft_strchr(src, '$');
+	}
+	str.data[str.len] = '\0';
+	return (str.data);
+}
 
 
-// char	*create_str(t_token *tokens)
-// {
-// 	char	*str;
+char	*create_str(t_token *tokens)
+{
+	char	*str;
 
-// 	str = malloc(tokens->len + 1);
-// 	ft_memcpy(str, tokens->data, tokens->len + 1);
-// 	return (str);
-// }
+	str = malloc(tokens->len + 1);
+	ft_memcpy(str, tokens->data, tokens->len + 1);
+	return (str);
+}
 // char	**create_com_array(t_token **tokens, t_list **env)
 // {
 // 	char	**array;
@@ -117,6 +125,42 @@ typedef struct s_count
 
 // }
 
+char *type(int type) //delete
+{
+	if(type == EMPTY)
+		return ft_strdup("EMPTY");
+	else if(type == TEXT)
+		return ft_strdup("TEXT");
+	else if(type ==  RED_RIGHT)
+		return ft_strdup("RED_RIGHT");
+	else if(type ==  RED_DRIGHT)
+		return ft_strdup("RED_DRIGHT");
+	else if(type ==  RED_LEFT)
+		return ft_strdup("RED_LEFT");
+	else if(type == PIPE)
+		return ft_strdup("PIPE");
+	else if(type == SEMICOLON)
+		return ft_strdup("SEMICOLON");
+	else if(type == OR)
+		return ft_strdup("OR");
+	else if(type == AND)
+		return ft_strdup("AND");
+	else if(type == ENV)
+		return ft_strdup("ENV");
+	else
+		return ft_strdup("ERROR TYPE");
+}
+
+void	print_tokens(t_token *lst)
+{
+	printf("   TOKENS\n");
+	while (lst)
+	{
+		printf("%-11s:  %s\n", type(lst->type), lst->data);
+		lst = lst->prev;
+	}
+	printf("\n\n");
+}
 t_list	*create_com_lst(t_token **tokens, t_list **env)
 {
 	int			pipe_type;
@@ -134,124 +178,147 @@ t_list	*create_com_lst(t_token **tokens, t_list **env)
 
 	pipe_type = 0;
 	list_to_return = NULL;
-	env = NULL;   //delete!!!
 	while(*tokens && ((*tokens)->type != SEMICOLON))
 	{
 		temp = *tokens;
 		rsize = 0;
-		while (*tokens && temp->type != SEMICOLON && temp->type != PIPE)
+		//print_tokens(tokens);
+		while (temp && temp->type != SEMICOLON && temp->type != PIPE)
 		{
-			if ((*tokens)->type <= RED_DRIGHT)
+			if (temp->type <= RED_DRIGHT)
 				rsize++;
 			temp = temp->prev;
 		}
-		printf("RED SIZE = %d\n", rsize);
+		//printf("RED SIZE = %d\n", rsize);
 		if (rsize)
 		{
-			red = malloc(sizeof(t_redir) * rsize + 1);
+			red = malloc(sizeof(t_redir) * (rsize + 1));
 			temp = *tokens;
 			size = 0;
-			while (temp->type == TEXT)
+			while (temp && temp->type != SEMICOLON && temp->type != PIPE)
 			{
-				size++;
+				if(temp->type >= TEXT)
+					size++;
 				temp = temp->prev;
 			}
 			size -= rsize;
-			com_array = malloc(sizeof(char *) * size + 1);
+			printf("COM SIZE = %d\n", size);
+			com_array = malloc(sizeof(char *) * (size + 1));
 			com_array[size] = NULL;
 			i = 0;
 			j = 0;
-			while ((*tokens)->type != SEMICOLON && (*tokens)->type != PIPE)
+			while (*tokens && (*tokens)->type != SEMICOLON && (*tokens)->type != PIPE)
 			{
 				if ((*tokens)->type <= RED_DRIGHT)
 				{
 					*tokens = (*tokens)->prev;
-					red[i] = red_create((*tokens)->data,(*tokens)->next->type);
-					*tokens = (*tokens)->prev;
+					red[i++] = red_create((*tokens)->data, (*tokens)->next->type);
 				}
-				while ((*tokens)->type == TEXT)
+				else if (*tokens && (*tokens)->type == TEXT)
 				{
-					com_array[j] = ft_strdup((*tokens)->data);
-					j++;
-					*tokens = (*tokens)->prev;
+					com_array[j++] = ft_strdup((*tokens)->data);
 				}
+				*tokens = (*tokens)->prev;
+
 			}
 			red[i] = red_create_last();
 
 			if (pipe_type & PIPE_OUT)
 					pipe_type |= PIPE_IN;
-			if ((*tokens)->type == PIPE)
+			if (*tokens && (*tokens)->type == PIPE)
 				pipe_type |= PIPE_OUT;
 			else
 				pipe_type &= ~PIPE_OUT;
 
+			// printf("\nCOMMANDS ARRAY\n");
+			// for (size_t k = 0; com_array[k]; k++) // delete !!!
+			// 	printf("%s\n", com_array[k]);
+
 			cmd = com_create(com_array, red, pipe_type);
-
-			printf("COMMANDS ARRAY\n");
-			for (size_t k = 0; com_array[k]; k++)
-				printf("%s\n", com_array[k]);
-
 			node = ft_lstnew(cmd);
 			ft_lstadd_back(&list_to_return, node);
 		}
-		else if ((*tokens)->type == TEXT)
+		else
 		{
 			temp = *tokens;
 			size = 0;
-			while (temp->type == TEXT)
+			while (temp && temp->type != SEMICOLON && temp->type != PIPE)
 			{
-				size++;
+				if(temp->type >= TEXT)
+					size++;
 				temp = temp->prev;
 			}
-			com_array = malloc(sizeof(char *) * size + 1);
+			// printf("COM SIZE = %d\n", size);
+			com_array = malloc(sizeof(char *) * (size + 1));
 			com_array[size] = NULL;
 			i = 0;
-			while (i < size)
+			while (*tokens && (*tokens)->type != SEMICOLON && (*tokens)->type != PIPE)
 			{
-				com_array[i] = ft_strdup((*tokens)->data);
-				i++;
+				if ((*tokens)->type == TEXT)
+					com_array[i++] = ft_strdup((*tokens)->data); //create_str(*tokens);
+				else if ((*tokens)->type == ENV)
+					com_array[i++] = create_env_str((*tokens)->data, env);
 				*tokens = (*tokens)->prev;
 			}
-
 			if (pipe_type & PIPE_OUT)
 					pipe_type |= PIPE_IN;
-
-			if ((*tokens)->type == PIPE)
+			if (*tokens && (*tokens)->type == PIPE)
 				pipe_type |= PIPE_OUT;
 			else
 				pipe_type &= ~PIPE_OUT;
+
+			// printf("COMMANDS ARRAY\n");
+			// for (size_t k = 0; com_array[k]; k++) // delete !!!
+			// 	printf("%zu|%s|\n", k, com_array[k]);
 
 			cmd = com_create(com_array, NULL, pipe_type);
 			node = ft_lstnew(cmd);
 			ft_lstadd_back(&list_to_return, node);
 		}
 	}
-
-
+	if(*tokens && ((*tokens)->type == SEMICOLON))
+				*tokens = (*tokens)->prev;
 	return (list_to_return);
+}
+
+void pritn_com(void *com)
+{
+	t_command *cmd;
+	int		i;
+
+	cmd = com;
+	i = 0;
+	while ((cmd->com)[i])
+	{
+		printf("cmd = |%s|\n",(cmd->com)[i]);
+		i++;
+	}
+
 }
 
 void	tokens_handler(t_token **tokens, t_list **env)
 {
 	t_list		*commands;
+	t_token		*end;
 
+	commands = *env;
+
+	end = *tokens;
 	while (*tokens)
 	{
-		//get_env()
 		commands = create_com_lst(tokens, env);
-		printf("lst OK\n");
 		if(commands)
 			commands_handler(commands, env);
-		printf("com OK\n");
-
-
-		if (*tokens && (*tokens)->prev)
-		{
-			*tokens = (*tokens)->prev;
-			// clear_tokens(&((*tokens)->next), free); del by next!!!!
-		}
-		ft_lstclear(&commands, com_clear);
+		// if (*tokens && (*tokens)->prev)
+		// {
+		// 	*tokens = (*tokens)->prev;
+		// 	clear_next(&((*tokens)->next), free);// del by next!!!!
+		// }
+		//ft_lstiter(commands, pritn_com);
+		if (commands)
+			ft_lstclear(&commands, com_clear);
 	}
-	// clear_tokens(tokens, free); del by next!!!!
+	clear_prev(&end, free);
+	 //del by next!!!!
 }
 

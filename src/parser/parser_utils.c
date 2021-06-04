@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:24:34 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/30 18:02:12 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/04 17:41:47 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,29 @@ int	token_lst_size(t_token *lst)
 	i = 0;
 	while (lst)
 	{
-		lst = lst->prev;
+		lst = lst->next;
 		i++;
 	}
 	return (i);
 }
 
-void	clear_tokens(t_token **lst, void (*del)(void *))
+void	clear_next(t_token **lst, void (*del)(void *))
+{
+	t_token	*tmp;
+
+	if (!lst || !(*lst))
+		return ;
+	while (*lst != NULL)
+	{
+		tmp = (*lst)->next;
+		if (del)
+			del((*lst)->data);
+		free(*lst);
+		*lst = tmp;
+	}
+}
+
+void	clear_prev(t_token **lst, void (*del)(void *))
 {
 	t_token	*tmp;
 
@@ -91,7 +107,7 @@ void	clear_tokens(t_token **lst, void (*del)(void *))
 t_token *token_last(t_token *lst)
 {
 	if (!lst)
-	return (NULL);
+		return (NULL);
 	while (lst->next)
 		lst = lst->next;
 	return (lst);
@@ -122,18 +138,21 @@ void add_symbol(t_token **tokens, char c, int type)
 	(*tokens)->data[(*tokens)->len++] = c;
 }
 
-void *ft_realloc(void *ptr, size_t src_size, size_t new_size)
+void *ft_realloc(void *src, size_t src_size, size_t new_size)
 {
 	void *new;
 
 	new = NULL;
-	if(ptr && src_size < new_size)
+	if(src && src_size < new_size)
 	{
 		new = malloc(new_size);
 		if(!new)
-			return (NULL);
-		ft_memcpy(new, (const void *)ptr, src_size);
-		free(ptr);
+			error_exit("malloc error");
+		ft_memcpy(new, (const void *)src, src_size);
+		if(src)
+			free(src);
 	}
+	else
+		return (src);
 	return (new);
 }

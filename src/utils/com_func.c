@@ -2,6 +2,8 @@
 #include "structs.h"
 #include "exit.h"
 
+#include <stdio.h>
+
 char	**com_getcom(t_list *list)
 {
 	return (((t_command*)list->content)->com);
@@ -35,6 +37,7 @@ t_command	*com_create(char **commands, t_redir *red, int pipe_type)
 	com->com = commands;
 	com->pipe_type = pipe_type;
 	com->red = red;
+	com->info = NULL;
 	return (com);
 }
 
