@@ -1,8 +1,8 @@
 #ifndef COM_FUNC_H
 # define COM_FUNC_H
 
-#include "libft.h"
-#include "structs.h"
+# include "libft.h"
+# include "structs.h"
 
 char		**com_getcom(t_list *list);
 t_redir		*com_getredir(t_list *list);

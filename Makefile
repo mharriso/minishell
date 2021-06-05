@@ -43,6 +43,8 @@ SRC_UTILS	=	check_long_long.c \
 				com_func.c \
 				red_func.c\
 				commands_handler.c \
+				sort_env.c \
+				print_error.c \
 				$(addprefix $(DLST)/, $(SRC_DLST)) \
 				$(addprefix $(TSTR)/, $(SRC_TSTR))
 

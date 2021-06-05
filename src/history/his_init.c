@@ -24,6 +24,7 @@ static void	fill_history_fd(t_dlist **dlst, int fd)
 		line = NULL;
 		res = get_next_line(fd, &line);
 	}
+	free(line);
 }
 
 t_hisory	*history_init(const char *pname, t_list **env)
@@ -50,6 +51,7 @@ t_hisory	*history_init(const char *pname, t_list **env)
 		close(fd);
 		i++;
 	}
+	free(msh_lvl);
 	return (his);
 }
 

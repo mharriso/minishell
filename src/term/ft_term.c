@@ -46,12 +46,12 @@ static void	term_keycode_handler(t_string *buf, t_string *line, \
 	if (!term_strcmp(buf->str, key_up))
 	{
 		his = history_up_arrow(&(history->cur));
-		term_cur_vert(his, line, &(pos->l));
+		term_cur_vert(his, line, pos);
 	}
 	else if (!term_strcmp(buf->str, key_down))
 	{
 		his = history_down_arrow(&(history->cur), line->str);
-		term_cur_vert(his, line, &(pos->l));
+		term_cur_vert(his, line, pos);
 	}
 	else if (!term_strcmp(buf->str, key_left))
 		term_cur_left(&(pos->l), &(pos->r), pos->cols);
@@ -104,7 +104,7 @@ void	ft_term(char *pname, t_list **env)
 		history->cur = history->begin;
 		write(1, "\n", 1);
 		if (*(line->str))
-			printf("\nline = |%s|\n", line->str); //parser
+			printf("line = |%s|\n", line->str); //parser
 	}
 	tstr_free(line);
 	tstr_free(buf);

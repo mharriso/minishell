@@ -3,7 +3,7 @@
 #include "ft_term.h"
 #include "term_utils.h"
 
-static void	term_cur_right_nl(int cols, size_t len, int is_write)
+void	term_cur_right_nl(int cols, size_t len, int is_write)
 {
 	if (((len + PROMPT_SIZE) % cols) == 0)
 	{

@@ -27,7 +27,8 @@ char	*history_down_arrow(t_dlist **cur_history, char *cur_line)
 		return (his_line);
 	if ((*cur_history)->prew)
 	{
-		if (!(*cur_history)->next && !ft_strcmp(cur_line, (*cur_history)->content))
+		if (!(*cur_history)->next
+			&& !ft_strcmp(cur_line, (*cur_history)->content))
 		{
 			his_line = (*cur_history)->prew->content;
 		}
@@ -35,7 +36,7 @@ char	*history_down_arrow(t_dlist **cur_history, char *cur_line)
 		{
 			*cur_history = (*cur_history)->prew;
 			if ((*cur_history)->prew)
-	 			his_line = (*cur_history)->prew->content;
+				his_line = (*cur_history)->prew->content;
 		}
 	}
 	return (his_line);

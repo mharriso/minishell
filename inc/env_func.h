@@ -6,14 +6,14 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 18:00:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/21 16:16:19 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/05 17:09:39 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ENV_FUNC_H
 # define ENV_FUNC_H
 
-#include "libft.h"
+# include "libft.h"
 
 int		env_name_check(char *str);
 char	*env_getname(char *str);

@@ -9,7 +9,7 @@ t_redir	red_create(char *fname, int type)
 	return (red);
 }
 
-t_redir	red_create_last()
+t_redir	red_create_last(void)
 {
 	return (red_create(NULL, 0));
 }

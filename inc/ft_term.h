@@ -5,7 +5,7 @@
 # define PROMPT_SIZE 11
 # define BUF_SIZE 8
 
-#include "libft.h"
+# include "libft.h"
 
 void	ft_term(char *pname, t_list **env);
 
