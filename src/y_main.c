@@ -62,33 +62,6 @@ int	check_tokens(t_token *last)
 
 }
 
-// char *type(int type) //delete
-// {
-// 	if(type == EMPTY)
-// 		return strdup("EMPTY");
-// 	else if(type == TEXT)
-// 		return strdup("TEXT");
-// 	else if(type ==  RED_RIGHT)
-// 		return strdup("RED_RIGHT");
-// 	else if(type ==  RED_DRIGHT)
-// 		return strdup("RED_DRIGHT");
-// 	else if(type ==  RED_LEFT)
-// 		return strdup("RED_LEFT");
-// 	else if(type == PIPE)
-// 		return strdup("PIPE");
-// 	else if(type == SEMICOLON)
-// 		return strdup("SEMICOLON");
-// 	else if(type == OR)
-// 		return strdup("OR");
-// 	else if(type == AND)
-// 		return strdup("AND");
-// 	else if(type == ENV)
-// 		return strdup("ENV");
-// 	else
-// 		return strdup("ERROR TYPE");
-// }
-
-
 void	check_last_token(t_token **tokens)
 {
 	if (*tokens && (*tokens)->type == EMPTY)
@@ -96,10 +69,10 @@ void	check_last_token(t_token **tokens)
 		if((*tokens)->next)
 		{
 			tokens = &(*tokens)->next;
-			clear_prev(&((*tokens)->prev), free);
+			clear_tokens_prev(&((*tokens)->prev), free);
 		}
 		else
-			clear_next(tokens, free);
+			clear_tokens_prev(tokens, free);
 	}
 }
 
@@ -110,10 +83,8 @@ t_token	*parser(char *line)
 	tokens = parse_line(&line);
 	check_last_token(&tokens);
 	tokens = token_last(tokens);
-	//create_array(&tokens, token_lst_size(tokens));
 	if(!check_tokens(tokens))
-		clear_prev(&tokens, free);
-	//create_array(&tokens, token_lst_size(tokens));
+		clear_tokens_prev(&tokens, free);
 	return (tokens);
 }
 
@@ -124,9 +95,8 @@ void run_parser(char *line, t_list	**lenv)
 	aaa = lenv;
 
 	tokens = parser(line);
-	//clear_prev(&tokens, free);
-	// if(tokens)
-	tokens_handler(&tokens, lenv);
+	if(tokens)
+		tokens_handler(&tokens, lenv);
 }
 
 void asd(char **env)
@@ -136,13 +106,13 @@ void asd(char **env)
 
 	lenv = env_create(env);
 
-	// while (1)
-	// {
+
+	while(1)
+	{
 		ft_putstr_fd(PROMPT, 1);
 		get_next_line(0, &line);
 		run_parser(line, &lenv);
-
-	//}
+	}
 	ft_lstclear(&lenv, env_clear);
 }
 
@@ -155,6 +125,6 @@ int	main(int argc, char **argv, char **env)
 
 	asd(env);
 
-	sleep(10);
+	//sleep(15);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:08:45 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/04 15:10:07 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/05 16:28:06 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ t_token	*parse_line(char **str);
 void	create_new_token(t_token **tokens, int len);
 void	start_tokens(t_token **tokens, int len);
 int		token_lst_size(t_token *lst);
-void	clear_next(t_token **lst, void (*del)(void *));
-void	clear_prev(t_token **lst, void (*del)(void *));
+void	clear_tokens_next(t_token **lst, void (*del)(void *));
+void	clear_tokens_prev(t_token **lst, void (*del)(void *));
 
 void	line_init(t_line *line, char **str);
 void	*ft_realloc(void *src, size_t src_size, size_t new_size);

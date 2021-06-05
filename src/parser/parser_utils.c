@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:24:34 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/04 17:41:47 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/05 20:29:58 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	token_lst_size(t_token *lst)
 	return (i);
 }
 
-void	clear_next(t_token **lst, void (*del)(void *))
+void	clear_tokens_next(t_token **lst, void (*del)(void *))
 {
 	t_token	*tmp;
 
@@ -88,7 +88,7 @@ void	clear_next(t_token **lst, void (*del)(void *))
 	}
 }
 
-void	clear_prev(t_token **lst, void (*del)(void *))
+void	clear_tokens_prev(t_token **lst, void (*del)(void *))
 {
 	t_token	*tmp;
 
