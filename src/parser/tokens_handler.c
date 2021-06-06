@@ -44,18 +44,17 @@ void	add_env_value(t_str *str, char **src, t_list **env)
 	value = NULL;
 	if(**src == '?')
 	{
+		(*src)++;
 		value = ft_itoa(g_ret);
 		if(!value)
 			error_exit("malloc error");
 	}
 	else if(ft_isalpha(**src) || **src == '_')
 	{
-		//printf("before name|%s|\n", *src);
 		name = get_env_name(src);
 		value = env_getvaluebyname(name, *env);
 		if(value)
 			value = ft_strdup(value);
-		//printf("name = |%s| value = %s\n", name, value);
 		free(name);
 	}
 	if(value)
@@ -142,6 +141,15 @@ void	print_tokens(t_token *lst)
 	}
 	printf("\n\n");
 }
+
+void	init_cmd(t_command *cmd)
+{
+	cmd = malloc(sizeof(t_command));
+	if (!cmd)
+		error_exit("init_cmd\n");
+	ft_memset(cmd, 0, sizeof(t_command));
+}
+
 t_list	*create_com_lst(t_token **tokens, t_list **env)
 {
 	int			pipe_type;
@@ -239,7 +247,7 @@ void pritn_com(void *com)
 
 }
 
-void	tokens_handler(t_token **tokens, t_list **env)
+unsigned int	tokens_handler(t_token **tokens, t_list **env)
 {
 	t_list		*commands;
 	t_token		*end;
@@ -252,12 +260,12 @@ void	tokens_handler(t_token **tokens, t_list **env)
 		commands = create_com_lst(tokens, env);
 		if(commands)
 		{
-			commands_handler(commands, env);
+			g_ret = commands_handler(commands, env);
 			ft_lstclear(&commands, com_clear);
 		}
 	}
 	//print_tokens(end);
 	clear_tokens_prev(&end, free);
-
+	return (g_ret);
 }
 

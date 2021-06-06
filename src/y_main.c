@@ -88,7 +88,7 @@ t_token	*parser(char *line)
 	return (tokens);
 }
 
-void run_parser(char *line, t_list	**lenv)
+unsigned int run_parser(char *line, t_list	**lenv)
 {
 	t_token	*tokens;
 	t_list	**aaa;
@@ -97,6 +97,7 @@ void run_parser(char *line, t_list	**lenv)
 	tokens = parser(line);
 	if(tokens)
 		tokens_handler(&tokens, lenv);
+	return (g_ret);
 }
 
 void asd(char **env)
@@ -107,12 +108,12 @@ void asd(char **env)
 	lenv = env_create(env);
 
 
-	while(1)
-	{
+	//while(1)
+	//{
 		ft_putstr_fd(PROMPT, 1);
 		get_next_line(0, &line);
 		run_parser(line, &lenv);
-	}
+	//}
 	ft_lstclear(&lenv, env_clear);
 }
 
@@ -124,7 +125,7 @@ int	main(int argc, char **argv, char **env)
 	aaa = argv;
 
 	asd(env);
-
+	printf("%d\n", g_ret);
 	//sleep(15);
 	return (0);
 }
