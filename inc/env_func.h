@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 18:00:21 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/06/05 17:09:39 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/06 14:37:17 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,6 @@ char	*e_value(t_list *env);
 char	**env_listtoarr(t_list *env);
 char	*env_getvaluebyname(const char *name, t_list *env);
 char	**env_listtoarr_to_new(t_list *env);
+char	*str_env(const char *name, const char *value);
 
 #endif

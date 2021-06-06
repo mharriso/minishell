@@ -1,29 +1,25 @@
 #include "env_func.h"
 #include "buildin.h"
 #include "ft_term.h"
+#include <stdio.h>
 
-#include <stdlib.h>
-
-void ft_run(int argc, char **argv, char **envp)
+static void	ms_run(int argc, char **argv, char **envp)
 {
 	t_list	*env;
 
+	if (argc > 1)
+	{
+		printf("No args allow\n");
+		return ;
+	}
 	env = env_create(envp);
-
-	if (argc >= 1)
-		ft_term(argv[0], &env);
-
+	ft_term(argv[0], &env);
 	ft_lstclear(&env, env_clear);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	char **a;
-
-	a = malloc(sizeof(char *) * 2);
-	a[0] = ft_strdup("0");
-	a[1] = NULL;
-	ft_run(argc, argv,envp);
-	ft_exit(a);
+	ms_run(argc, argv, envp);
+	ft_exit(NULL);
 	return (0);
 }

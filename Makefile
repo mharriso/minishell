@@ -10,6 +10,7 @@ HISTORY	=	history
 TERM	=	term
 DLST	=	dlist
 TSTR	=	tstr
+ENV_F	=	env_func
 
 HEADER	=	buildin.h \
 			exit.h \
@@ -26,7 +27,8 @@ HEADER	=	buildin.h \
 			ft_term.h \
 			term_utils.h \
 			history.h \
-			history_utils.h
+			history_utils.h\
+			g_var.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
@@ -38,7 +40,6 @@ SRC_TSTR	=	tstr_init.c \
 
 SRC_UTILS	=	check_long_long.c \
 				exit.c \
-				env_func.c \
 				get_full_path.c \
 				com_func.c \
 				red_func.c\
@@ -75,12 +76,17 @@ SRC_TERM	=	ft_term.c \
 				term_write.c \
 				utils.c
 
+SRC_ENV_F	=	env_creation.c \
+				env_get.c \
+				env_utils.c
+
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(BUILDIN)/, $(SRC_BUILDIN)) \
 			$(addprefix $(FORK)/, $(SRC_FORK)) \
 			$(addprefix $(PARSER)/, $(SRC_PARSER)) \
 			$(addprefix $(HISTORY)/, $(SRC_HISTORY)) \
-			$(addprefix $(TERM)/, $(SRC_TERM))
+			$(addprefix $(TERM)/, $(SRC_TERM)) \
+			$(addprefix $(ENV_F)/, $(SRC_ENV_F))
 
 SOURCES	= $(addprefix $(SRC)/, $(SRC_F))
 
@@ -112,7 +118,7 @@ $(NAME): ${OBJECTS}
 	gcc -I ${INC} $(OBJECTS) -ltermcap -l ft -L ${FT} -o $(NAME)
 
 %.o: %.c ${HFILES}
-	gcc ${FLAGS} -I ${INC} -c $< -o $@
+	gcc -I ${INC} -c $< -o $@
 
 clean:
 	make clean -C ${FT}

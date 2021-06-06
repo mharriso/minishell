@@ -1,6 +1,8 @@
 #include "ft_term.h"
 #include "term_utils.h"
 #include "history.h"
+#include "exit.h"
+#include "g_var.h"
 #include <term.h>
 
 #include <stdio.h> //REMOVE!!!
@@ -11,31 +13,31 @@ static t_string	*term_buf_init(void)
 
 	buf = malloc(sizeof(t_string));
 	if (!buf)
-		exit(EXIT_FAILURE);
+		error_exit("term_buf_init");
 	buf->str = malloc(BUF_SIZE);
 	if (!buf->str)
-		exit(EXIT_FAILURE);
+		error_exit("term_buf_init");
 	buf->len = 0;
 	term_clear_str(buf->str, BUF_SIZE);
 	return (buf);
 }
 
-static void	term_set_attr(struct termios *orig)
+static void	term_set_attr()
 {
 	char			*term_name;
 	struct termios	new;
 
 	term_name = getenv("TERM");
 	if (tgetent(0, term_name) != 1)
-		exit(EXIT_FAILURE);
-	if (tcgetattr(0, orig))
-		exit(EXIT_FAILURE);
-	new = *orig;
+		error_exit("term_set_attr");
+	if (tcgetattr(0, &g_orig))
+		error_exit("term_set_attr");
+	new = g_orig;
 	new.c_lflag &= ~(ECHO | ICANON);
 	new.c_cc[VMIN] = 1;
 	new.c_cc[VTIME] = 0;
 	if (tcsetattr(0, TCSANOW, &new))
-		exit(EXIT_FAILURE);
+		error_exit("term_set_attr");
 }
 
 static void	term_keycode_handler(t_string *buf, t_string *line, \
@@ -90,11 +92,10 @@ void	ft_term(char *pname, t_list **env)
 	t_string		*buf;
 	t_string		*line;
 	t_hisory		*history;
-	struct termios	orig;
 
 	history = history_init(pname, env);
 	buf = term_buf_init();
-	term_set_attr(&orig);
+	term_set_attr();
 	line = tstr_create();
 	while (term_strcmp(buf->str, "\4"))
 	{
@@ -110,5 +111,4 @@ void	ft_term(char *pname, t_list **env)
 	tstr_free(buf);
 	history_save(history->fname, history->begin); // in success_exit
 	history_free(history);
-	tcsetattr(0, TCSANOW, &orig); //  in success_exit
 }

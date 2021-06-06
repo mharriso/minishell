@@ -1,25 +1,27 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/17 19:17:16 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/14 17:39:36 by tjuliean         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
+#include <string.h>
+#include <term.h>
+#include "g_var.h"
+
+static void	restor_params()
+{
+	tcsetattr(0, TCSANOW, &g_orig);
+}
 
 void	error_exit(const char *msg)
 {
-	perror(msg);
+	char	*errorbuf;
+
+	errorbuf = strerror(errno);
+	printf("%s: %s\n", msg, errorbuf);
+	restor_params();
 	exit(EXIT_FAILURE);
 }
 
 void	success_exit(char code)
 {
+	restor_params();
 	exit(code);
 }

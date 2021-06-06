@@ -6,13 +6,14 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 20:16:29 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/16 18:18:58 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/06 19:14:20 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "exit.h"
 #include "utils.h"
+#include "ft_term.h"
 
 //argv must be null terminated
 void	ft_exit(char **argv)
@@ -20,7 +21,9 @@ void	ft_exit(char **argv)
 	int			i;
 	long long	code;
 
-	printf("exit\n");
+	printf("%sexit\n", PROMPT);
+	if (!argv)
+		success_exit(0);
 	i = 0;
 	while (argv[i] && i < 2)
 		i++;

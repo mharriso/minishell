@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 20:28:36 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/06/05 19:58:37 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/06 19:09:57 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,13 @@ static void	show_env(t_list *env)
 	free(temp);
 }
 
-static void	handle_env(char *arg, int res, t_list **env, int *ret)
+static void	handle_env(char *arg, t_list **env, int *ret)
 {
 	t_env	new_e;
+	int		res;
 
+	new_e.name = env_getname(arg);
+	res = env_name_check(new_e.name);
 	if (res)
 	{
 		new_e.value = env_getvalue(arg);
@@ -75,8 +78,6 @@ static void	handle_env(char *arg, int res, t_list **env, int *ret)
 		free(new_e.name);
 		*ret = 1;
 	}
-	new_e.name = env_getname(arg);
-	res = env_name_check(new_e.name);
 }
 
 //argv must be null terminated, env - pointer to *env
@@ -96,7 +97,7 @@ int	ft_export(char **argv, t_list **env)
 			argv++;
 			continue ;
 		}
-		handle_env(*argv, res, env, &ret);
+		handle_env(*argv, env, &ret);
 		argv++;
 	}
 	return (ret);
