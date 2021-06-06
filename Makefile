@@ -118,7 +118,7 @@ $(NAME): ${OBJECTS}
 	gcc -I ${INC} $(OBJECTS) -ltermcap -l ft -L ${FT} -o $(NAME)
 
 %.o: %.c ${HFILES}
-	gcc -I ${INC} -c $< -o $@
+	gcc ${FLAGS} -I ${INC} -c $< -o $@
 
 clean:
 	make clean -C ${FT}
