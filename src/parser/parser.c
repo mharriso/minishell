@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/05 20:32:50 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/06 19:09:26 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	parse_separator(t_token **tokens, t_line *line, char c)
 		save_one(tokens, line, c, SEMICOLON);
 	else if (c == '&')
 		add_symbol(tokens, c, TEXT);
-
 }
 
 void	parse_normal(t_token **tokens, t_line *line, char c)
@@ -61,7 +60,7 @@ void	parse_normal(t_token **tokens, t_line *line, char c)
 		add_symbol(tokens, (*(line->data))[++line->index], TEXT);
 	else if (c == '$')
 	{
-		if((*(line->data))[line->index + 1] != '\'' && \
+		if ((*(line->data))[line->index + 1] != '\'' && \
 			(*(line->data))[line->index + 1] != '\"')
 			add_symbol(tokens, c, ENV);
 	}
@@ -77,7 +76,7 @@ void	parse_in_dquotes(t_token **tokens, t_line *line, char c)
 		add_symbol(tokens, c, ENV);
 	else if (c == '\\')
 	{
-		if((*(line->data))[line->index + 1] == '\"' ||
+		if ((*(line->data))[line->index + 1] == '\"' ||
 			(*(line->data))[line->index + 1] == '\\')
 			add_symbol(tokens, (*(line->data))[++line->index], TEXT);
 		else
@@ -85,7 +84,6 @@ void	parse_in_dquotes(t_token **tokens, t_line *line, char c)
 	}
 	else
 		add_symbol(tokens, c, TEXT);
-
 }
 
 void	parse_in_quotes(t_token **tokens, t_line *line, char c)
@@ -118,4 +116,3 @@ t_token	*parse_line(char **str)
 	*str = NULL;
 	return (tokens);
 }
-
