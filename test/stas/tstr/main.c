@@ -9,7 +9,7 @@ int	main()
 
 	tstr_add(str, "Heallo! sdf");
 	printf("%s\n", str->str);
-	tstr_remove_at(str, 2);
+	tstr_remove_at(str, 3);
 	printf("%s\n", str->str);
 	tstr_remove(str);
 	printf("%s\n", str->str);

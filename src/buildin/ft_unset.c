@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 21:23:41 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/25 15:06:35 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/05 18:47:54 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "env_func.h"
 #include "libft.h"
 
-int remove_env(char *name, t_list **env)
+static int	remove_env(const char *name, t_list **env)
 {
 	int		equal;
 	t_list	*temp;

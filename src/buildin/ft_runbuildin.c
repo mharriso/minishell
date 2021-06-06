@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/18 16:27:46 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/25 15:26:41 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/05 18:45:39 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,62 +31,25 @@ static char	*ft_absname(char *arg)
 	return (name);
 }
 
-static int run_second_part(char *name, char **argv, t_list **env)
-{
-	int		res;
-
-	res = ft_strcmp("exit", name);
-	if (!res)
-	{
-		ft_exit(argv);
-		return (res);
-	}
-	res = ft_strcmp("export", name);
-	if (!res)
-	{
-		res = ft_export(argv, env);
-		return (res);
-	}
-	res = ft_strcmp("pwd", name);
-	if (!res)
-	{
-		res = ft_pwd();
-		return (res);
-	}
-	res = ft_strcmp("unset", name);
-	if (!res)
-	{
-		res = ft_unset(argv, env);
-		return (res);
-	}
-	return (-1);
-}
-
 //argv must be from argv[1]
 int	ft_runbuildin(char **argv, t_list **env)
 {
-	int		res;
 	char	*name;
 
 	name = ft_absname(argv[0]);
-	res = ft_strcmp("cd", name);
-	if (!res)
-	{
-		res = ft_cd(argv + 1, env);
-		return (res);
-	}
-	res = ft_strcmp("echo", name);
-	if (!res)
-	{
-		res = ft_echo(argv + 1);
-		return (res);
-	}
-	res = ft_strcmp("env", name);
-	if (!res)
-	{
-		res = ft_env(*env);
-		return (res);
-	}
-	res = run_second_part(name, argv + 1, env);
-	return (res);
+	if (!ft_strcmp("cd", name))
+		return (ft_cd(argv + 1, env));
+	else if (!ft_strcmp("echo", name))
+		return (ft_echo(argv + 1));
+	else if (!ft_strcmp("env", name))
+		return (ft_env(*env));
+	else if (!ft_strcmp("exit", name))
+		ft_exit(argv);
+	else if (!ft_strcmp("export", name))
+		return (ft_export(argv, env));
+	else if (!ft_strcmp("pwd", name))
+		return (ft_pwd());
+	else if (!ft_strcmp("unset", name))
+		return (ft_unset(argv, env));
+	return (-1);
 }

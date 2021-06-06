@@ -14,49 +14,38 @@ static void	ft_dup(t_fdi *info)
 	close(info->fd[1]);
 }
 
-static void print_error(const char *name, const char *msg)
+static void	execute_func(char *path, char **commands, t_list *env)
 {
-	char	*str;
-	char	*temp;
-	int		len;
+	char		**a_env;
+	struct stat	buf;
 
-	temp = ft_strjoin("minishell: ", name);
-	str = ft_strjoin(temp, msg);
-	len = ft_strlen(str);
-	write(2, str, len);
-	free(temp);
-	free(str);
+	if (!stat(path, &buf))
+	{
+		if (buf.st_mode & S_IEXEC)
+		{
+			a_env = env_listtoarr_to_new(env);
+			execve(path, commands, a_env);
+		}
+		else
+		{
+			print_error(*commands, ": not a exec file\n");
+			exit(126);
+		}
+	}
+	exit(127);
 }
 
 static void	ft_execve(char **commands, t_list **env)
 {
 	int			res;
 	char		*path;
-	char		**a_env;
-	struct stat	buf;
 
 	res = ft_runbuildin(commands, env);
 	if (res != -1)
 		exit(res);
 	path = get_full_path(*commands, *env);
 	if (path)
-	{
-		res = stat(path, &buf);
-		if (res == 0)
-		{
-			if (buf.st_mode & S_IEXEC)
-			{
-				a_env = env_listtoarr_to_new(*env);
-				execve(path, commands, a_env);
-			}
-			else
-			{
-				print_error(*commands, ": not a exec file\n");
-				exit(126);
-			}
-		}
-		exit(127);
-	}
+		execute_func(path, commands, *env);
 	else
 	{
 		print_error(*commands, ": command not found\n");

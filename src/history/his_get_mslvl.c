@@ -33,7 +33,7 @@ char	*history_get_shlvl(t_list **env)
 	lvl = env_getvaluebyname("MINISHLVL", *env);
 	if (!lvl)
 	{
-		lvl =set_lvl(env);
+		lvl = set_lvl(env);
 		if (!lvl)
 			error_exit("history_get_shlvl");
 	}

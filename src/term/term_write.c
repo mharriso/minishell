@@ -3,14 +3,40 @@
 #include "ft_term.h"
 #include "term_utils.h"
 
+void	term_eol_check(int cols, size_t len)
+{
+	if (((len + PROMPT_SIZE) % (cols - 1)) == 0)
+	{
+		tputs(cursor_down, 1, term_putchar);
+		while (cols > 0)
+		{
+			tputs(cursor_left, 1, term_putchar);
+			cols--;
+		}
+	}
+	else
+		tputs(cursor_right, 1, term_putchar);
+}
+
 void	term_del_char(t_string *str, size_t *pos, int cols)
 {
+	size_t	cur_pos;
+
 	if (*pos)
 	{
 		tstr_remove_at(str, *pos);
-		term_cur_left_ol(cols, *pos);
-		tputs(delete_character, 1, term_putchar);
-		(*pos)--;
+		tputs(restore_cursor, 1, term_putchar);
+		tputs(clr_eos, 1, term_putchar);
+		write(1, str->str, str->pos);
+		tputs(restore_cursor, 1, term_putchar);
+		cur_pos = *pos;
+		*pos = 0;
+		while (cur_pos > 1)
+		{
+			term_eol_check(cols, *pos);
+			(*pos)++;
+			cur_pos--;
+		}
 	}
 }
 
@@ -20,17 +46,16 @@ void	term_write( t_string *str, size_t *pos, t_string *buff, int cols)
 	size_t	elen;
 
 	end_part = tstr_insert_size(str, *pos, buff->str, buff->len);
-	if (!end_part)
-		write(1, buff->str, buff->len);
-	else
+	tputs(restore_cursor, 1, term_putchar);
+	write(1, str->str, str->pos);
+	tputs(restore_cursor, 1, term_putchar);
+	elen = ft_strlen(end_part);
+	elen = str->pos - elen + 1;
+	*pos = 0;
+	while (elen > 0)
 	{
-		ft_putstr_fd(end_part, 1);
-		elen = ft_strlen(end_part);
-		while (elen > 1)
-		{
-			term_cur_left_ol(cols, *pos);
-			elen--;
-		}
+		term_eol_check(cols, *pos);
+		(*pos)++;
+		elen--;
 	}
-	(*pos) += buff->len;
 }
