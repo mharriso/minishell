@@ -3,36 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   check_long_long.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 18:04:25 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/15 18:13:07 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/05 20:28:48 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "libft.h"
 
-static int check_limit(char *str, int sign)
+static int	check_limit(char *str, int sign)
 {
-	char *ll_int;
+	char	*ll_int;
 
-	if(sign == -1)
+	if (sign == -1)
 		ll_int = ft_strdup("9223372036854775808");
 	else
 		ll_int = ft_strdup("9223372036854775807");
-	while(*str)
+	while (*str)
 	{
-		if(*str > *ll_int)
+		if (*str > *ll_int)
 			return (0);
 		str++;
 		ll_int++;
 	}
 	return (1);
 }
+
 static int	check_num(char *str, int sign)
 {
-	int i;
+	int		i;
 
 	i = 0;
 	while (str[i])
@@ -41,13 +42,13 @@ static int	check_num(char *str, int sign)
 			return (0);
 		i++;
 	}
-	if(i == 19)
+	if (i == 19)
 		return (check_limit(str, sign));
 	return (1);
 }
 
 //ok = 1 if success, ok = 0 if fail
-long long ft_atoll(char *str, int *ok)
+long long	ft_atoll(char *str, int *ok)
 {
 	long long	number;
 	int			sign;
@@ -61,12 +62,12 @@ long long ft_atoll(char *str, int *ok)
 	}
 	else if (*str == '+')
 		str++;
-	while(*str == '0')
+	while (*str == '0')
 		str++;
-	if(!check_num(str, sign))
+	if (!check_num(str, sign))
 	{
 		*ok = 0;
-		return 0;
+		return (0);
 	}
 	number = 0;
 	while (*str)

@@ -2,6 +2,8 @@
 #include "structs.h"
 #include "exit.h"
 
+#include <stdio.h>
+
 char	**com_getcom(t_list *list)
 {
 	return (((t_command*)list->content)->com);

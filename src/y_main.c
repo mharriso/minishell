@@ -3,6 +3,7 @@
 #include "libft.h"
 #include "parser.h"
 #include "env_func.h"
+#include "structs.h"
 
 #include "exit.h"
 #include "env_func.h"
@@ -18,74 +19,113 @@
 #define DOLLAR GREEN"$"RESET
 #define DIAMOND "\U0001F538"
 
-char *type(int type) //delete
+static unsigned int g_ret;
+
+void syntax_error(char *str)
 {
-	if(type == EMPTY)
-		return strdup("EMPTY");
-	else if(type == TEXT)
-		return strdup("TEXT");
-	else if(type ==  RED_RIGHT)
-		return strdup("RED_RIGHT");
-	else if(type ==  RED_DRIGHT)
-		return strdup("RED_DRIGHT");
-	else if(type ==  RED_LEFT)
-		return strdup("RED_LEFT");
-	else if(type == PIPE)
-		return strdup("PIPE");
-	else
-		return strdup("ERROR TYPE");
+	printf("%s: syntax error near unexpected token `%s'\n", PROMPT, str);
+	g_ret = 258;
 }
 
-char		**create_array(t_token **head, int size)
+int	check_tokens(t_token *last)
 {
-	char	**arr;
-	t_token	*tmp;
+	t_token	*previous;
 
-	tmp = *head;
-	if (!(arr = malloc((size + 1) * sizeof(char *))))
-		error_exit("malloc error");
-	arr[size] = NULL;
-	while (tmp)
+	if(!last)
+		return (1);
+	previous = last;
+	if(last->type == SEMICOLON || last->type == PIPE)
 	{
-		size--;
-		printf("%-11s:  |%s|\n", type(tmp->type), tmp->data); //delete
-		if (!(arr[size] = malloc(tmp->len + 1)))
-			error_exit("malloc error");
-		ft_memcpy(arr[size], tmp->data, tmp->len);
-		arr[size][tmp->len] = '\0';
-		tmp = tmp->next;
+		syntax_error(last->data);
+		return 0;
 	}
-	return (arr);
+	while ((last = last->prev))
+	{
+		if(previous->type <= RED_DRIGHT && last->type < TEXT)
+		{
+			syntax_error(previous->data);
+			return 0;
+		}
+		if(previous->type <= SEMICOLON && last->type == SEMICOLON)
+		{
+			syntax_error(previous->data);
+			return 0;
+		}
+		previous = last;
+	}
+	if(previous->type <= PIPE)
+	{
+		syntax_error(previous->data);
+		return 0;
+	}
+	return 1;
+
+}
+
+void	check_last_token(t_token **tokens)
+{
+	if (*tokens && (*tokens)->type == EMPTY)
+	{
+		if((*tokens)->next)
+		{
+			tokens = &(*tokens)->next;
+			clear_tokens_prev(&((*tokens)->prev), free);
+		}
+		else
+			clear_tokens_prev(tokens, free);
+	}
+}
+
+t_token	*parser(char *line)
+{
+	t_token	*tokens;
+
+	tokens = parse_line(&line);
+	check_last_token(&tokens);
+	tokens = token_last(tokens);
+	if(!check_tokens(tokens))
+		clear_tokens_prev(&tokens, free);
+	return (tokens);
+}
+
+unsigned int run_parser(char *line, t_list	**lenv)
+{
+	t_token	*tokens;
+	t_list	**aaa;
+	aaa = lenv;
+
+	tokens = parser(line);
+	if(tokens)
+		tokens_handler(&tokens, lenv);
+	return (g_ret);
+}
+
+void asd(char **env)
+{
+	t_list	*lenv;
+	char	*line;
+
+	lenv = env_create(env);
+
+
+	//while(1)
+	//{
+		ft_putstr_fd(PROMPT, 1);
+		get_next_line(0, &line);
+		run_parser(line, &lenv);
+	//}
+	ft_lstclear(&lenv, env_clear);
 }
 
 int	main(int argc, char **argv, char **env)
 {
-	t_list	*lenv;
-	t_token *tokens;
-	char *line;
-
 	int num;
 	char **aaa;
 	num = argc;
 	aaa = argv;
 
-	lenv = env_create(env);
-	//while(1)
-	//{
-		//ft_putstr_fd(YELLOW ARROW BLUE" msh"RESET SHELL" "DIAMOND" ", 1);
-		ft_putstr_fd(PROMPT, 1);
-		get_next_line(0, &line);
-		while(line)
-		{
-			tokens = parse_line(&line, &lenv);
-			printf("line out = %s\n", line);
-			create_array(&tokens, token_lst_size(tokens));
-			clear_tokens(&tokens, free);
-
-
-		}
-	//}
-	ft_lstclear(&lenv, env_clear);
-	//sleep(20);
+	asd(env);
+	printf("%d\n", g_ret);
+	//sleep(15);
 	return (0);
 }

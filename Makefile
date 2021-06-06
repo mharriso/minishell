@@ -63,7 +63,8 @@ SRC_FORK	=	redirect.c \
 				pipe.c
 
 SRC_PARSER	=	parser.c \
-				parser_utils.c
+				parser_utils.c \
+				tokens_handler.c 
 
 SRC_HISTORY	=	his_edit.c \
 				his_get_fname.c \
