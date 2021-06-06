@@ -6,6 +6,11 @@ INC		=	inc
 UTILS	=	utils
 PARSER	=	parser
 FORK	=	fork
+HISTORY	=	history
+TERM	=	term
+DLST	=	dlist
+TSTR	=	tstr
+ENV_F	=	env_func
 
 HEADER	=	buildin.h \
 			exit.h \
@@ -16,17 +21,33 @@ HEADER	=	buildin.h \
 			fork.h \
 			com_func.h \
 			red_func.h \
-			parser.h
+			parser.h \
+			dlist.h \
+			tstr.h \
+			ft_term.h \
+			term_utils.h \
+			history.h \
+			history_utils.h\
+			g_var.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
+SRC_DLST	=	dlist_f.c \
+				dlist_f2.c
+
+SRC_TSTR	=	tstr_init.c \
+				tstr_edit.c
+
 SRC_UTILS	=	check_long_long.c \
 				exit.c \
-				env_func.c \
 				get_full_path.c \
 				com_func.c \
 				red_func.c\
-				commands_handler.c
+				commands_handler.c \
+				sort_env.c \
+				print_error.c \
+				$(addprefix $(DLST)/, $(SRC_DLST)) \
+				$(addprefix $(TSTR)/, $(SRC_TSTR))
 
 SRC_BUILDIN	=	ft_pwd.c \
 				ft_cd.c \
@@ -45,10 +66,28 @@ SRC_PARSER	=	parser.c \
 				parser_utils.c \
 				tokens_handler.c 
 
+SRC_HISTORY	=	his_edit.c \
+				his_get_fname.c \
+				his_get_mslvl.c \
+				his_init.c
+
+SRC_TERM	=	ft_term.c \
+				term_cur_hor.c \
+				term_cur_vert.c \
+				term_write.c \
+				utils.c
+
+SRC_ENV_F	=	env_creation.c \
+				env_get.c \
+				env_utils.c
+
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(BUILDIN)/, $(SRC_BUILDIN)) \
 			$(addprefix $(FORK)/, $(SRC_FORK)) \
-			$(addprefix $(PARSER)/, $(SRC_PARSER))
+			$(addprefix $(PARSER)/, $(SRC_PARSER)) \
+			$(addprefix $(HISTORY)/, $(SRC_HISTORY)) \
+			$(addprefix $(TERM)/, $(SRC_TERM)) \
+			$(addprefix $(ENV_F)/, $(SRC_ENV_F))
 
 SOURCES	= $(addprefix $(SRC)/, $(SRC_F))
 
@@ -77,7 +116,7 @@ all: ${NAME}
 
 $(NAME): ${OBJECTS}
 	make bonus -C ${FT}
-	gcc -I ${INC} $(OBJECTS) -l ft -L ${FT} -o $(NAME)
+	gcc -I ${INC} $(OBJECTS) -ltermcap -l ft -L ${FT} -o $(NAME)
 
 %.o: %.c ${HFILES}
 	gcc ${FLAGS} -I ${INC} -c $< -o $@
@@ -97,7 +136,7 @@ norm:
 
 s_test: ${S_OBJECTS}
 	make bonus -C ${FT}
-	gcc -I ${INC} $(S_SOURCE) -g -l ft -L ${FT} -o ${S_NAME}
+	gcc -I ${INC} $(S_SOURCE) -g -ltermcap -l ft -L ${FT} -o ${S_NAME}
 s_clean:
 	make clean -C ${FT}
 	rm -f ${S_OBJECTS}
@@ -108,7 +147,7 @@ s_re: s_fclean s_test
 
 y_test: ${Y_OBJECTS}
 	make bonus -C ${FT}
-	gcc -I ${INC} $(Y_OBJECTS) -l ft -L ${FT} -o ${Y_NAME}
+	gcc -I ${INC} $(Y_OBJECTS) -ltermcap -l ft -L ${FT} -o ${Y_NAME}
 y_clean:
 	make clean -C ${FT}
 	rm -f ${Y_OBJECTS}

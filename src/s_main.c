@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 13:32:03 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/24 15:16:12 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/06 19:02:21 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "fork.h"
 #include "com_func.h"
 #include "red_func.h"
+#include "ft_term.h"
 
 // static char	**fill_arg(int argc, char **argv)
 // {
@@ -51,12 +52,12 @@ t_list	*create_cmd()
 	char		**com;
 
 	com = malloc(sizeof(char*) * 2);
-	com[0] = ft_strdup("pwd");
+	com[0] = ft_strdup("yes");
 	com[1] = NULL;
-	lst = ft_lstnew(com_create(com, NULL, PIPE_OUT));
+	lst = ft_lstnew(com_create(com, NULL, 0));
 
 	com = malloc(sizeof(char*) * 2);
-	com[0] = ft_strdup("cat");
+	com[0] = ft_strdup("head");
 	com[1] = NULL;
 	node = ft_lstnew(com_create(com, NULL, PIPE_IN));
 	ft_lstadd_back(&lst, node);
@@ -72,19 +73,35 @@ void ft_run(int argc, char **argv, char **envp)
 	char **a;
 	a = argv;
 
+	char **b;
+	b = malloc(sizeof(char*) * 2);
+	b[0] = ft_strdup("AAA=123");
+	b[1] = NULL;
+
 	env = env_create(envp);
 
 	if (argc >= 1)
 	{
-		cmd_list = create_cmd();
-		commands_handler(cmd_list, &env);
-		ft_lstclear(&cmd_list, com_clear);
+		// cmd_list = create_cmd();
+		// commands_handler(cmd_list, &env);
+		// ft_lstclear(&cmd_list, com_clear);
+		ft_export(b, &env);
+		ft_env(env);
+		//ft_term(argv[0], &env);
 	}
+
 	ft_lstclear(&env, env_clear);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
+	// char **a;
+
+	// a = malloc(sizeof(char *) * 2);
+	// a[0] = ft_strdup("0");
+	// a[1] = NULL;
 	ft_run(argc, argv,envp);
+	ft_exit(NULL);
+	//sleep(10);
 	return (0);
 }

@@ -1,35 +1,25 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/17 19:17:19 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/16 14:18:50 by tjuliean         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include <stdlib.h>
-#include "struct.h"
-#include "buildin.h"
 #include "env_func.h"
+#include "buildin.h"
+#include "ft_term.h"
+#include <stdio.h>
 
-
-int main (int argc, char **argv, char **env)
+static void	ms_run(int argc, char **argv, char **envp)
 {
-	env = env_dup(env);
-	if (argc == 2)
+	t_list	*env;
+
+	if (argc > 1)
 	{
-		ft_cd(argv[1]);
+		printf("No args allow\n");
+		return ;
 	}
-	else if (argc == 3)
-	{
-		ft_export(argv + 1, &env);
-		ft_env((const char **)env);
-	}
-	else
-		ft_pwd();
-	free(env);
+	env = env_create(envp);
+	ft_term(argv[0], &env);
+	ft_lstclear(&env, env_clear);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	ms_run(argc, argv, envp);
+	ft_exit(NULL);
 	return (0);
 }

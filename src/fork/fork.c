@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <sys/stat.h>
 #include "structs.h"
 #include "libft.h"
 #include "buildin.h"
@@ -13,25 +14,42 @@ static void	ft_dup(t_fdi *info)
 	close(info->fd[1]);
 }
 
+static void	execute_func(char *path, char **commands, t_list *env)
+{
+	char		**a_env;
+	struct stat	buf;
+
+	if (!stat(path, &buf))
+	{
+		if (buf.st_mode & S_IEXEC)
+		{
+			a_env = env_listtoarr_to_new(env);
+			execve(path, commands, a_env);
+		}
+		else
+		{
+			print_error(*commands, ": not a exec file\n");
+			exit(126);
+		}
+	}
+	exit(127);
+}
+
 static void	ft_execve(char **commands, t_list **env)
 {
-	int		res;
-	char	*path;
-	char	**a_env;
+	int			res;
+	char		*path;
 
 	res = ft_runbuildin(commands, env);
-	if (res)
-		exit(0);//TODO what to return?
+	if (res != -1)
+		exit(res);
 	path = get_full_path(*commands, *env);
 	if (path)
-	{
-		a_env = env_listtoarr_to_new(*env);
-		execve(path, commands, a_env);
-	}
+		execute_func(path, commands, *env);
 	else
 	{
-		printf("minishell: %s: command not found\n", *commands);
-		exit(1);
+		print_error(*commands, ": command not found\n");
+		exit(127);
 	}
 }
 
@@ -40,7 +58,6 @@ static void	do_fork(t_fork *info, char **commands, t_redir *red, t_list **env)
 	info->pid = fork();
 	if (!info->pid)
 	{
-
 		if (info->pipe_type & PIPE_IN)
 			ft_dup(info->fd);
 		if (info->pipe_type & PIPE_OUT)
