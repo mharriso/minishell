@@ -3,9 +3,8 @@
 #include "history.h"
 #include "exit.h"
 #include "g_var.h"
+#include "parser.h"
 #include <term.h>
-
-#include <stdio.h> //REMOVE!!!
 
 static t_string	*term_buf_init(void)
 {
@@ -22,7 +21,7 @@ static t_string	*term_buf_init(void)
 	return (buf);
 }
 
-static void	term_set_attr()
+void	term_set_attr()
 {
 	char			*term_name;
 	struct termios	new;
@@ -87,11 +86,12 @@ static void	term_line_handler(t_string *buf, t_string *line, \
 	}
 }
 
-void	ft_term(char *pname, t_list **env)
+int	ft_term(char *pname, t_list **env)
 {
 	t_string		*buf;
 	t_string		*line;
 	t_hisory		*history;
+	int				ret;
 
 	history = history_init(pname, env);
 	buf = term_buf_init();
@@ -101,14 +101,17 @@ void	ft_term(char *pname, t_list **env)
 	{
 		term_line_handler(buf, line, history);
 		if (*(line->str))
+		{
 			history_add(line->str, &(history->begin));
+			history_save(history->fname, history->begin);
+		}
 		history->cur = history->begin;
 		write(1, "\n", 1);
 		if (*(line->str))
-			printf("line = |%s|\n", line->str); //parser
+			ret = run_parser(line->str, env);
 	}
 	tstr_free(line);
 	tstr_free(buf);
-	history_save(history->fname, history->begin); // in success_exit
 	history_free(history);
+	return (ret);
 }

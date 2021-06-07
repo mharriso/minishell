@@ -5,9 +5,10 @@
 #include <term.h>
 #include "g_var.h"
 
-static void	restor_params()
+void	restor_params(void)
 {
-	tcsetattr(0, TCSANOW, &g_orig);
+	if (tcsetattr(0, TCIFLUSH, &g_orig))
+		printf("Error: restor_params\n");
 }
 
 void	error_exit(const char *msg)

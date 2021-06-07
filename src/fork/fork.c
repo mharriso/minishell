@@ -6,10 +6,10 @@
 #include "utils.h"
 #include "env_func.h"
 #include "fork.h"
+#include "com_func.h"
 
-static void	ft_dup(t_fdi *info)
+static void	ft_dup_close(t_fdi *info)
 {
-	dup2(info->fd[info->type], info->type);
 	close(info->fd[0]);
 	close(info->fd[1]);
 }
@@ -53,26 +53,48 @@ static void	ft_execve(char **commands, t_list **env)
 	}
 }
 
-static void	do_fork(t_fork *info, char **commands, t_redir *red, t_list **env)
+static void	close_all(t_list *beg)
+{
+	t_fork	*info;
+
+	while (beg)
+	{
+		info = com_getinfo(beg);
+		if (info)
+		{
+			if (info->pipe_type & PIPE_IN)
+				ft_dup_close(info->fd);
+			if (info->pipe_type & PIPE_OUT)
+				ft_dup_close(info->fd + 1);
+		}
+		beg = beg->next;
+	}
+}
+
+static void	do_fork(t_fork *info, t_command *cmd, t_list **env, t_list *com_beg)
 {
 	info->pid = fork();
 	if (!info->pid)
 	{
 		if (info->pipe_type & PIPE_IN)
-			ft_dup(info->fd);
+			dup2(info->fd->fd[info->fd->type], info->fd->type);
 		if (info->pipe_type & PIPE_OUT)
-			ft_dup(info->fd + 1);
-		do_redirect(red);
-		ft_execve(commands, env);
+			dup2((info->fd + 1)->fd[(info->fd + 1)->type], (info->fd + 1)->type);
+		close_all(com_beg);
+		do_redirect(cmd->red);
+		ft_execve(cmd->com, env);
 	}
 }
 
-void	exec_external(char **command, t_redir *red, t_fork *info, t_list **env)
+void	exec_external(t_list *com_list, t_list **env, t_list *com_beg)
 {
-	if (!info)
+	t_command	*cmd;
+
+	cmd = com_list->content;
+	if (!cmd->info)
 	{
-		info = malloc(sizeof(t_fork));
-		info->pipe_type = 0;
+		cmd->info = malloc(sizeof(t_fork));
+		cmd->info->pipe_type = 0;
 	}
-	do_fork(info, command, red, env);
+	do_fork(cmd->info, cmd, env, com_beg);
 }

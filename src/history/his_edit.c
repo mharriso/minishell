@@ -41,31 +41,3 @@ char	*history_down_arrow(t_dlist **cur_history, char *cur_line)
 	}
 	return (his_line);
 }
-
-void	history_add(const char *content, t_dlist **history)
-{
-	t_dlist	*node;
-
-	if (!history || !*history || !(*history)->content || !content)
-		return ;
-	if (!ft_strcmp((*history)->content, content))
-		return ;
-	node = ft_dlstnew(ft_strdup(content));
-	if (!node)
-		error_exit("history_add");
-	ft_dlstadd_front(history, node);
-}
-
-void	history_save(const char *fname, t_dlist *history)
-{
-	int		fd;
-
-	fd = open(fname, O_WRONLY | O_CREAT | O_TRUNC);
-	while (history)
-	{
-		ft_putstr_fd((char *)history->content, fd);
-		write(fd, "\n", 1);
-		history = history->next;
-	}
-	close(fd);
-}

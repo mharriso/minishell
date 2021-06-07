@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "libft.h"
+#include "ft_term.h"
 
 void	print_error(const char *name, const char *msg)
 {
@@ -7,7 +8,7 @@ void	print_error(const char *name, const char *msg)
 	char	*temp;
 	int		len;
 
-	temp = ft_strjoin("minishell: ", name);
+	temp = ft_strjoin(PROMPT, name);
 	str = ft_strjoin(temp, msg);
 	len = ft_strlen(str);
 	write(2, str, len);

@@ -1,8 +1,16 @@
-asddasdasd
-HI!!!
-gjcd
-cd
+./minishell
+hi
+echo hello
+make
+ls | cat -e | cat -e
+ls | cat -e
+yes | head | cat -e
+yes | head
+yes | yes | head
+ls | cat -e | cat -e
+ls | cat -e
+./minishell
+echo $USER
+echo &USER
 pwd
-ls
-cat -e
-echo Hello!
+./minishell

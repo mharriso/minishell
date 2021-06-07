@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:08:45 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/05 16:28:06 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/06 19:40:30 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 #define CROSS "\U0000274E"
 #define DOLLAR GREEN"$"RESET
 #define DIAMOND "\U0001F538"
-#define PROMPT SHELL" "DIAMOND BLUE"-msh-"RESET DIAMOND" "
+//#define PROMPT SHELL" "DIAMOND BLUE"-msh-"RESET DIAMOND" "
 
 typedef struct s_line
 {
@@ -71,7 +71,9 @@ t_token	*token_last(t_token *lst);
 void	save_twins(t_token **tokens, t_line *line, char c, int type);
 void	save_one(t_token **tokens, t_line *line, char c, int type);
 void	add_symbol(t_token **tokens, char c, int type);
-void	tokens_handler(t_token **tokens, t_list **env);
+int		tokens_handler(t_token **tokens, t_list **env);
+
+unsigned int	run_parser(char *line, t_list	**lenv);
 
 
 
