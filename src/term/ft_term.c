@@ -6,8 +6,6 @@
 #include "parser.h"
 #include <term.h>
 
-#include <stdio.h>
-
 static t_string	*term_buf_init(void)
 {
 	t_string	*buf;
@@ -103,7 +101,10 @@ int	ft_term(char *pname, t_list **env)
 	{
 		term_line_handler(buf, line, history);
 		if (*(line->str))
+		{
 			history_add(line->str, &(history->begin));
+			history_save(history->fname, history->begin);
+		}
 		history->cur = history->begin;
 		write(1, "\n", 1);
 		if (*(line->str))
@@ -111,7 +112,6 @@ int	ft_term(char *pname, t_list **env)
 	}
 	tstr_free(line);
 	tstr_free(buf);
-	history_save(history->fname, history->begin);
 	history_free(history);
 	return (ret);
 }

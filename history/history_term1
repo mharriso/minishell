@@ -1,3 +1,5 @@
+echo $USER
+echo $USEr
 pwd
 ps
 ls

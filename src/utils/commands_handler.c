@@ -14,7 +14,7 @@ static int	exec_command(t_list *com_list, t_list **env)
 
 	res = ft_runbuildin(com_getcom(com_list), env);
 	if (res == -1)
-		exec_external(com_list, env);
+		exec_external(com_list, env, com_list);
 	return (res);
 }
 
@@ -73,7 +73,7 @@ int	commands_handler(t_list *com_list, t_list **env)
 	t_redir	*red;
 	int		status;
 
-	print_com_list(com_list);
+	//print_com_list(com_list);
 	status = -1;
 	restor_params();
 	if (com_list->next)
@@ -83,7 +83,7 @@ int	commands_handler(t_list *com_list, t_list **env)
 		command = com_getcom(com_list);
 		red = com_getredir(com_list);
 		if (red)
-			exec_external(com_list, env);
+			exec_external(com_list, env, com_list);
 		else
 			status = exec_command(com_list, env);
 	}

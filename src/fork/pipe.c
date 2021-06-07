@@ -64,7 +64,7 @@ void	do_pipe(t_list *com_list, t_list **env)
 		((t_command *)temp->content)->info = make_tfork(temp);
 		commands = com_getcom(temp);
 		red = com_getredir(temp);
-		exec_external(temp, env);
+		exec_external(temp, env, com_list);
 		temp = temp->next;
 	}
 	close_fd(com_list);
