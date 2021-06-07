@@ -212,7 +212,7 @@ void	alloc_arrays(t_command *cmd, t_token *tokens)
 			c_size++;
 		temp = temp->prev;
 	}
-	printf("COM_SIZE = %d\nRED_SIZE = %d\n", c_size, r_size);
+	//printf("COM_SIZE = %d\nRED_SIZE = %d\n", c_size, r_size);
 	if (r_size)
 	{
 		cmd->red = malloc(sizeof(t_redir) * (r_size + 1));
@@ -225,12 +225,15 @@ void	alloc_arrays(t_command *cmd, t_token *tokens)
 
 void	set_pipe(t_command *cmd, t_token *tokens)
 {
-	if (cmd->pipe_type & PIPE_OUT)
+	static int	type;
+
+	if (type & PIPE_OUT)
 		cmd->pipe_type |= PIPE_IN;
 	if (tokens && tokens->type == PIPE)
 		cmd->pipe_type |= PIPE_OUT;
 	else
 		cmd->pipe_type &= ~PIPE_OUT;
+	type = cmd->pipe_type;
 }
 
 t_list	*create_com_lst(t_token **tokens, t_list **env)
@@ -256,7 +259,7 @@ t_list	*create_com_lst(t_token **tokens, t_list **env)
 	return (commands);
 }
 
-void	tokens_handler(t_token **tokens, t_list **env)
+int	tokens_handler(t_token **tokens, t_list **env)
 {
 	t_list		*commands;
 	t_token		*end;
@@ -268,12 +271,11 @@ void	tokens_handler(t_token **tokens, t_list **env)
 		commands = create_com_lst(tokens, env);
 		if (commands)
 		{
-			commands_handler(commands, env);
+			g_ret = commands_handler(commands, env);
 			ft_lstclear(&commands, com_clear);
 		}
 	}
-	//print_tokens(end);
 	clear_tokens_prev(&end, free);
-	//return (g_ret);
+	return (g_ret);
 }
 

@@ -3,14 +3,18 @@
 #include "structs.h"
 #include "fork.h"
 #include "com_func.h"
+#include "ft_term.h"
+#include "exit.h"
 
-static int	exec_command(char **command, t_list **env)
+#include <stdio.h>
+
+static int	exec_command(t_list *com_list, t_list **env)
 {
 	int	res;
 
-	res = ft_runbuildin(command, env);
+	res = ft_runbuildin(com_getcom(com_list), env);
 	if (res == -1)
-		exec_external(command, NULL, NULL, env);
+		exec_external(com_list, env);
 	return (res);
 }
 
@@ -22,6 +26,7 @@ static int	get_exstatus(t_list *com_list)
 	status = 0;
 	while (com_list)
 	{
+
 		info = com_getinfo(com_list);
 		if (info)
 		{
@@ -33,10 +38,32 @@ static int	get_exstatus(t_list *com_list)
 				status = WTERMSIG(status);
 				status += 128;
 			}
-			com_list = com_list->next;
 		}
+		com_list = com_list->next;
 	}
 	return (status);
+}
+
+void print_com_list(t_list *com_lst)
+{
+	char **cmd;
+
+	while (com_lst)
+	{
+		cmd = com_getcom(com_lst);
+		printf("Commands:\n");
+		while (*cmd)
+		{
+			printf("|%s|\n", *cmd);
+			cmd++;
+		}
+		if (!com_getinfo(com_lst))
+			printf("Info null\n");
+		if (!com_getredir(com_lst))
+			printf("red null\n");
+		printf("pipe = %d\n\n", com_getptype(com_lst));
+		com_lst = com_lst->next;
+	}
 }
 
 //return value = exit status ($?)
@@ -46,7 +73,9 @@ int	commands_handler(t_list *com_list, t_list **env)
 	t_redir	*red;
 	int		status;
 
+	print_com_list(com_list);
 	status = -1;
+	restor_params();
 	if (com_list->next)
 		do_pipe(com_list, env);
 	else
@@ -54,11 +83,13 @@ int	commands_handler(t_list *com_list, t_list **env)
 		command = com_getcom(com_list);
 		red = com_getredir(com_list);
 		if (red)
-			exec_external(command, red, NULL, env);
+			exec_external(com_list, env);
 		else
-			status = exec_command(command, env);
+			status = exec_command(com_list, env);
 	}
 	if (status == -1)
 		status = get_exstatus(com_list);
+	restor_params();
+	term_set_attr();
 	return (status);
 }

@@ -7,6 +7,7 @@
 
 # include "libft.h"
 
-void	ft_term(char *pname, t_list **env);
+int		ft_term(char *pname, t_list **env);
+void	term_set_attr();
 
 #endif

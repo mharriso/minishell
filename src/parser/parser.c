@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/06 19:09:26 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/06 19:45:54 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ t_token	*parse_line(char **str)
 			parse_in_quotes(&tokens, &line, (*(line.data))[line.index]);
 		line.index++;
 	}
-	free(*str);
-	*str = NULL;
+	//free(*str);
+	//*str = NULL;
 	return (tokens);
 }

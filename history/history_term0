@@ -1,8 +1,5 @@
-asddasdasd
-HI!!!
-gjcd
-cd
+./minishell
+echo $USER
+echo &USER
 pwd
-ls
-cat -e
-echo Hello!
+./minishell
