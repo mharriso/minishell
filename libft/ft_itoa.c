@@ -6,23 +6,26 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 22:15:29 by mharriso          #+#    #+#             */
-/*   Updated: 2020/11/02 23:23:04 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/07 20:02:38 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static	int		digits(int n)
+static	int	digits(int n)
 {
 	int		i;
 
-	i = 1;
-	while (n /= 10)
+	i = 0;
+	while (n)
+	{
+		n /= 10;
 		i++;
+	}
 	return (i);
 }
 
-char			*ft_itoa(int n)
+char	*ft_itoa(int n)
 {
 	char	*str;
 	int		minus;
@@ -36,7 +39,8 @@ char			*ft_itoa(int n)
 	if (minus)
 		n *= -1;
 	len = minus + digits(n);
-	if (!(str = malloc((len + 1) * sizeof(char))))
+	str = malloc((len + 1) * sizeof(char));
+	if (!str)
 		return (NULL);
 	if (minus)
 		str[0] = '-';

@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 17:49:39 by mharriso          #+#    #+#             */
-/*   Updated: 2020/12/19 01:51:23 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/07 21:05:13 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ static	size_t	count_words(char const *s, char c)
 	size_t		count;
 	int			i;
 
+	if (!s)
+		return (0);
 	i = 0;
 	count = 0;
 	while (s[i] && s[i + 1])
@@ -25,7 +27,8 @@ static	size_t	count_words(char const *s, char c)
 			count++;
 		i++;
 	}
-	count += (s[i] != c && s[0]) ? 1 : 0;
+	if (s[i] != c && s[0])
+		count++;
 	return (count);
 }
 
@@ -53,7 +56,7 @@ static	char	**free_words(char **array)
 	return (NULL);
 }
 
-char			**ft_split(char const *s, char c)
+char	**ft_split(char const *s, char c)
 {
 	char		**res;
 	size_t		len;
@@ -61,10 +64,9 @@ char			**ft_split(char const *s, char c)
 	size_t		i;
 	size_t		j;
 
-	if (!s)
-		return (NULL);
 	len = count_words(s, c);
-	if (!(res = (char**)ft_calloc((len + 1), sizeof(char*))))
+	res = (char **)ft_calloc((len + 1), sizeof(char *));
+	if (!res)
 		return (NULL);
 	i = 0;
 	j = -1;
@@ -73,7 +75,8 @@ char			**ft_split(char const *s, char c)
 		while (s[i] == c)
 			i++;
 		word_len = get_word_len(s + i, c);
-		if (!(res[j] = ft_calloc((word_len + 1), sizeof(char))))
+		res[j] = ft_calloc((word_len + 1), sizeof(char));
+		if (!res[j])
 			return (free_words(res));
 		res[j] = ft_memcpy(res[j], s + i, word_len);
 		i += word_len;

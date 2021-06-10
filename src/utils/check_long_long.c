@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 18:04:25 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/05 20:28:48 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/10 18:07:25 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ static int	check_num(char *str, int sign)
 	int		i;
 
 	i = 0;
+	while (str[i] == '0')
+		i++;
 	while (str[i])
 	{
 		if (!(ft_isdigit(str[i])) || i > 18)
@@ -61,8 +63,6 @@ long long	ft_atoll(char *str, int *ok)
 		str++;
 	}
 	else if (*str == '+')
-		str++;
-	while (*str == '0')
 		str++;
 	if (!check_num(str, sign))
 	{

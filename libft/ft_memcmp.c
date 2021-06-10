@@ -6,16 +6,16 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 15:55:23 by mharriso          #+#    #+#             */
-/*   Updated: 2020/10/31 21:13:11 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/07 20:07:44 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int		ft_memcmp(const void *buf1, const void *buf2, size_t count)
+int	ft_memcmp(const void *buf1, const void *buf2, size_t count)
 {
-	size_t		i;
-	int			res;
+	size_t	i;
+	int		res;
 
 	i = 0;
 	res = 0;

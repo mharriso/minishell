@@ -1,24 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   parse_line.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/06 19:45:54 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/10 00:19:37 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "libft.h"
-#include "exit.h"
 #include "parser.h"
 #include "env_func.h"
 #include "com_func.h"
 #include "red_func.h"
 #include "structs.h"
+#include "ft_term.h"
 
 void	parse_redirect(t_token **tokens, t_line *line, char c)
 {
@@ -28,20 +28,6 @@ void	parse_redirect(t_token **tokens, t_line *line, char c)
 		save_twins(tokens, line, c, RED_DRIGHT);
 	else if (c == '>')
 		save_one(tokens, line, c, RED_RIGHT);
-}
-
-void	parse_separator(t_token **tokens, t_line *line, char c)
-{
-	if (c == '|' && (*(line->data))[line->index + 1] == '|')
-		save_twins(tokens, line, c, OR);
-	else if (c == '|')
-		save_one(tokens, line, c, PIPE);
-	else if (c == '&' && (*(line->data))[line->index + 1] == '&')
-		save_twins(tokens, line, c, AND);
-	else if (c == ';')
-		save_one(tokens, line, c, SEMICOLON);
-	else if (c == '&')
-		add_symbol(tokens, c, TEXT);
 }
 
 void	parse_normal(t_token **tokens, t_line *line, char c)
@@ -54,8 +40,12 @@ void	parse_normal(t_token **tokens, t_line *line, char c)
 		parse_redirect(tokens, line, c);
 	else if (c == ' ' || c == '\t')
 		create_new_token(tokens, line->len);
-	else if (c == ';' || c == '|' || c == '&')
-		parse_separator(tokens, line, c);
+	else if (c == ';')
+		save_one(tokens, line, c, SEMICOLON);
+	else if (c == '|')
+		save_one(tokens, line, c, PIPE);
+	else if (c == '*')
+		add_symbol(tokens, c, WILDCARD);
 	else if (c == '\\')
 		add_symbol(tokens, (*(line->data))[++line->index], TEXT);
 	else if (c == '$')
@@ -112,7 +102,10 @@ t_token	*parse_line(char **str)
 			parse_in_quotes(&tokens, &line, (*(line.data))[line.index]);
 		line.index++;
 	}
-	//free(*str);
-	//*str = NULL;
+	if (line.status == IN_QUOTES || line.status == IN_DQUOTES)
+	{
+		printf("%s: syntax error: open quote\n", PROMPT);
+		clear_tokens_next(&tokens, free);
+	}
 	return (tokens);
 }
