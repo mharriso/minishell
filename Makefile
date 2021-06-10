@@ -65,13 +65,15 @@ SRC_FORK	=	redirect.c \
 				fork.c\
 				pipe.c
 
-SRC_PARSER	=	parse_line.c \
+SRC_PARSER	=	run_parser.c \
+				parse_line.c \
 				parser_utils.c \
 				tokens_utils.c \
 				tokens_utils2.c \
 				tokens_handler.c \
-				tokens_to_commands.c \
-				return_value.c
+				env_handler.c \
+				create_com_lst.c \
+
 
 SRC_HISTORY	=	his_edit.c \
 				his_get_fname.c \
