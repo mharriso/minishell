@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/16 16:08:45 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/10 00:20:01 by mharriso         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef PARSER_H
 # define PARSER_H
 
@@ -19,9 +7,6 @@
 # define IN_QUOTES 2
 # define IN_DQUOTES 3
 
-// #define RED_RIGHT 1
-// #define RED_LEFT 2
-// #define RED_DRIGHT 3
 # define EMPTY 0
 # define PIPE 4
 # define OR 5
@@ -41,6 +26,8 @@
 # define CROSS "\U0000274E"
 # define DIAMOND "\U0001F538"
 //#define PROMPT SHELL" "DIAMOND BLUE"-msh-"RESET DIAMOND" "
+
+#include "libft.h"
 
 typedef struct s_line
 {

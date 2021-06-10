@@ -11,6 +11,7 @@ TERM	=	term
 DLST	=	dlist
 TSTR	=	tstr
 ENV_F	=	env_func
+SIGNAL	=	signal
 
 HEADER	=	buildin.h \
 			exit.h \
@@ -27,8 +28,8 @@ HEADER	=	buildin.h \
 			ft_term.h \
 			term_utils.h \
 			history.h \
-			history_utils.h\
-			g_var.h
+			history_utils.h \
+			ft_signal.h
 
 HFILES	=	$(addprefix $(INC)/, $(HEADER))
 
@@ -46,6 +47,8 @@ SRC_UTILS	=	check_long_long.c \
 				commands_handler.c \
 				sort_env.c \
 				print_error.c \
+				wildcard.c \
+				com_get.c \
 				$(addprefix $(DLST)/, $(SRC_DLST)) \
 				$(addprefix $(TSTR)/, $(SRC_TSTR))
 
@@ -79,11 +82,14 @@ SRC_TERM	=	ft_term.c \
 				term_cur_hor.c \
 				term_cur_vert.c \
 				term_write.c \
-				utils.c
+				utils.c \
+				term_attr.c
 
 SRC_ENV_F	=	env_creation.c \
 				env_get.c \
 				env_utils.c
+
+SRC_SIGNAL	=	signal.c
 
 SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(BUILDIN)/, $(SRC_BUILDIN)) \
@@ -91,7 +97,8 @@ SRC_F	=	$(addprefix $(UTILS)/, $(SRC_UTILS)) \
 			$(addprefix $(PARSER)/, $(SRC_PARSER)) \
 			$(addprefix $(HISTORY)/, $(SRC_HISTORY)) \
 			$(addprefix $(TERM)/, $(SRC_TERM)) \
-			$(addprefix $(ENV_F)/, $(SRC_ENV_F))
+			$(addprefix $(ENV_F)/, $(SRC_ENV_F)) \
+			$(addprefix $(SIGNAL)/, $(SRC_SIGNAL))
 
 SOURCES	= $(addprefix $(SRC)/, $(SRC_F))
 

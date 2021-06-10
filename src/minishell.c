@@ -1,6 +1,7 @@
 #include "env_func.h"
 #include "exit.h"
 #include "ft_term.h"
+#include "ft_signal.h"
 #include <stdio.h>
 #include <locale.h>
 
@@ -14,6 +15,7 @@ static void	ms_run(int argc, char **argv, char **envp)
 		printf("No args allow\n");
 		return ;
 	}
+	sig_init();
 	env = env_create(envp);
 	ret = ft_term(argv[0], &env);
 	ft_lstclear(&env, env_clear);

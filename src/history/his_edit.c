@@ -2,8 +2,7 @@
 #include "libft.h"
 #include "dlist.h"
 #include "exit.h"
-
-#include <stdio.h>
+#include "history.h"
 
 char	*history_up_arrow(t_dlist **cur_history)
 {
@@ -40,4 +39,11 @@ char	*history_down_arrow(t_dlist **cur_history, char *cur_line)
 		}
 	}
 	return (his_line);
+}
+
+void	history_free(t_hisory *history)
+{
+	ft_dlstclear(&(history->begin), free);
+	free(history->fname);
+	free(history);
 }

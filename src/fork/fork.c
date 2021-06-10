@@ -7,12 +7,7 @@
 #include "env_func.h"
 #include "fork.h"
 #include "com_func.h"
-
-static void	ft_dup_close(t_fdi *info)
-{
-	close(info->fd[0]);
-	close(info->fd[1]);
-}
+#include "ft_signal.h"
 
 static void	execute_func(char *path, char **commands, t_list *env)
 {
@@ -63,9 +58,15 @@ static void	close_all(t_list *beg)
 		if (info)
 		{
 			if (info->pipe_type & PIPE_IN)
-				ft_dup_close(info->fd);
+			{
+				close(info->fd->fd[0]);
+				close(info->fd->fd[1]);
+			}
 			if (info->pipe_type & PIPE_OUT)
-				ft_dup_close(info->fd + 1);
+			{
+				close((info->fd + 1)->fd[0]);
+				close((info->fd + 1)->fd[1]);
+			}
 		}
 		beg = beg->next;
 	}
@@ -76,10 +77,12 @@ static void	do_fork(t_fork *info, t_command *cmd, t_list **env, t_list *com_beg)
 	info->pid = fork();
 	if (!info->pid)
 	{
+		sig_restore();
 		if (info->pipe_type & PIPE_IN)
 			dup2(info->fd->fd[info->fd->type], info->fd->type);
 		if (info->pipe_type & PIPE_OUT)
-			dup2((info->fd + 1)->fd[(info->fd + 1)->type], (info->fd + 1)->type);
+			dup2((info->fd + 1)->fd[(info->fd + 1)->type], \
+				(info->fd + 1)->type);
 		close_all(com_beg);
 		do_redirect(cmd->red);
 		ft_execve(cmd->com, env);
