@@ -4,9 +4,9 @@
 #include "history_utils.h"
 #include "exit.h"
 
-static unsigned int g_hsize;
+static unsigned int	g_hsize;
 
-static void	fill_history_fd(t_dlist **dlst, int fd , int is_cur)
+static void	fill_history_fd(t_dlist **dlst, int fd, int is_cur)
 {
 	char	*line;
 	char	*content;
@@ -31,6 +31,17 @@ static void	fill_history_fd(t_dlist **dlst, int fd , int is_cur)
 	free(line);
 }
 
+static t_hisory	*his_malloc(void)
+{
+	t_hisory	*his;
+
+	his = malloc(sizeof(t_hisory));
+	if (!his)
+		error_exit("history_init");
+	his->begin = NULL;
+	return (his);
+}
+
 t_hisory	*history_init(const char *pname, t_list **env)
 {
 	t_hisory	*his;
@@ -39,11 +50,8 @@ t_hisory	*history_init(const char *pname, t_list **env)
 	char		i;
 	int			fd;
 
-	his = malloc(sizeof(t_hisory));
-	if (!his)
-		error_exit("history_init");
+	his = his_malloc();
 	msh_lvl = history_get_shlvl(env);
-	his->begin = NULL;
 	i = *msh_lvl;
 	while (i >= '0')
 	{
@@ -62,22 +70,7 @@ t_hisory	*history_init(const char *pname, t_list **env)
 	return (his);
 }
 
-void	history_add(const char *content, t_dlist **history)
-{
-	t_dlist	*node;
-
-	if (!history || !*history || !(*history)->content || !content)
-		return ;
-	if (!ft_strcmp((*history)->content, content))
-		return ;
-	node = ft_dlstnew(ft_strdup(content));
-	if (!node)
-		error_exit("history_add");
-	ft_dlstadd_front(history, node);
-	g_hsize++;
-}
-
-void	history_save(const char *fname, t_dlist *history)
+static void	history_save(const char *fname, t_dlist *history)
 {
 	int				fd;
 	unsigned int	i;
@@ -94,9 +87,18 @@ void	history_save(const char *fname, t_dlist *history)
 	close(fd);
 }
 
-void	history_free(t_hisory *history)
+void	history_add(const char *fname, const char *content, t_dlist **history)
 {
-	ft_dlstclear(&(history->begin), free);
-	free(history->fname);
-	free(history);
+	t_dlist	*node;
+
+	if (!history || !*history || !(*history)->content || !content)
+		return ;
+	if (!ft_strcmp((*history)->content, content))
+		return ;
+	node = ft_dlstnew(ft_strdup(content));
+	if (!node)
+		error_exit("history_add");
+	ft_dlstadd_front(history, node);
+	g_hsize++;
+	history_save(fname, *history);
 }

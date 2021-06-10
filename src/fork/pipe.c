@@ -4,8 +4,6 @@
 #include "com_func.h"
 #include "fork.h"
 
-#include <stdio.h>
-
 static t_fork	*make_tfork(t_list *temp)
 {
 	t_fork		*info;
@@ -38,13 +36,11 @@ static void	close_fd(t_list *com_list)
 		info = com_getinfo(com_list);
 		if (info->pipe_type & PIPE_IN)
 		{
-			//printf("CLOSE IN: %d\n", info->pid);
 			close(info->fd[0].fd[0]);
 			close(info->fd[0].fd[1]);
 		}
 		if (info->pipe_type & PIPE_OUT)
 		{
-			//printf("CLOSE OUT: %d\n", info->pid);
 			close(info->fd[1].fd[0]);
 			close(info->fd[1].fd[1]);
 		}

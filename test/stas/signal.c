@@ -22,8 +22,8 @@ void	handle_backslash(int p)
 int	main(void)
 {
 	signal(SIGINT, handle_c);
-	signal(SIGQUIT, handle_backslash);
-	signal(SIGTSTP, handle_d);
-	sleep(15);
+	// signal(SIGQUIT, handle_backslash);
+	// signal(SIGTSTP, handle_d);
+	// sleep(15);
 	return (0);
 }

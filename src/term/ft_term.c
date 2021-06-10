@@ -2,7 +2,6 @@
 #include "term_utils.h"
 #include "history.h"
 #include "exit.h"
-#include "g_var.h"
 #include "parser.h"
 #include <term.h>
 
@@ -19,24 +18,6 @@ static t_string	*term_buf_init(void)
 	buf->len = 0;
 	term_clear_str(buf->str, BUF_SIZE);
 	return (buf);
-}
-
-void	term_set_attr()
-{
-	char			*term_name;
-	struct termios	new;
-
-	term_name = getenv("TERM");
-	if (tgetent(0, term_name) != 1)
-		error_exit("term_set_attr");
-	if (tcgetattr(0, &g_orig))
-		error_exit("term_set_attr");
-	new = g_orig;
-	new.c_lflag &= ~(ECHO | ICANON);
-	new.c_cc[VMIN] = 1;
-	new.c_cc[VTIME] = 0;
-	if (tcsetattr(0, TCSANOW, &new))
-		error_exit("term_set_attr");
 }
 
 static void	term_keycode_handler(t_string *buf, t_string *line, \
@@ -60,12 +41,11 @@ static void	term_keycode_handler(t_string *buf, t_string *line, \
 		term_cur_right(&(pos->l), &(pos->r), pos->cols);
 	else if (*buf->str == '\x7f' || !term_strcmp(buf->str, key_backspace))
 		term_del_char(line, &(pos->l), pos->cols);
-	else if (ft_strcmp(buf->str, "\033") && \
-			term_strcmp(buf->str, "\n") && term_strcmp(buf->str, "\4"))
+	else if (*(buf->str) >= ' ' && *(buf->str) <= '~')
 		term_write(line, &(pos->l), buf, pos->cols);
 }
 
-static void	term_line_handler(t_string *buf, t_string *line, \
+static int	term_line_handler(t_string *buf, t_string *line, \
 								t_hisory *his)
 {
 	t_pos	pos;
@@ -82,8 +62,18 @@ static void	term_line_handler(t_string *buf, t_string *line, \
 	{
 		term_clear_str(buf->str, BUF_SIZE);
 		buf->len = read(0, buf->str, BUF_SIZE);
+		if (!term_strcmp(buf->str, "\003"))
+			return (0);
 		term_keycode_handler(buf, line, &pos, his);
 	}
+	return (1);
+}
+
+static void	term_free(t_string *buf, t_string *line, t_hisory *history)
+{
+	tstr_free(line);
+	tstr_free(buf);
+	history_free(history);
 }
 
 int	ft_term(char *pname, t_list **env)
@@ -99,19 +89,18 @@ int	ft_term(char *pname, t_list **env)
 	line = tstr_create();
 	while (term_strcmp(buf->str, "\4"))
 	{
-		term_line_handler(buf, line, history);
-		if (*(line->str))
+		if (!term_line_handler(buf, line, history))
+			write(1, "\n", 1);
+		else
 		{
-			history_add(line->str, &(history->begin));
-			history_save(history->fname, history->begin);
+			if (*(line->str))
+				history_add(history->fname, line->str, &(history->begin));
+			history->cur = history->begin;
+			write(1, "\n", 1);
+			if (*(line->str))
+				ret = run_parser(line->str, env);
 		}
-		history->cur = history->begin;
-		write(1, "\n", 1);
-		if (*(line->str))
-			ret = run_parser(line->str, env);
 	}
-	tstr_free(line);
-	tstr_free(buf);
-	history_free(history);
+	term_free(buf, line, history);
 	return (ret);
 }
