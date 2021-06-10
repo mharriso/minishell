@@ -6,38 +6,47 @@
 #include "exit.h"
 #include "env_func.h"
 
-int	check_tokens(t_token *last)
+static	int	check_neighbors(t_token *previous, t_token *cur)
+{
+	if (previous->type <= RED_DRIGHT && (cur->type & ~(TEXT | ENV)))
+	{
+		syntax_error(previous->data);
+		return (0);
+	}
+	if (previous->type <= SEMICOLON && cur->type == SEMICOLON)
+	{
+		syntax_error(previous->data);
+		return (0);
+	}
+	return (1);
+}
+
+int	check_tokens(t_token *cur)
 {
 	t_token	*previous;
 
-	if(!last)
+	if (!cur)
 		return (1);
-	previous = last;
-	if(last->type == SEMICOLON || last->type == PIPE)
+	previous = cur;
+	if (cur->type == SEMICOLON || cur->type == PIPE)
 	{
-		syntax_error(last->data);
-		return 0;
+		syntax_error(cur->data);
+		return (0);
 	}
-	while ((last = last->prev))
+	cur = cur->prev;
+	while (cur)
 	{
-		// if(previous->type <= RED_DRIGHT && last->type & (TEXT | ENV))
-		// {
-		// 	syntax_error(previous->data);
-		// 	return 0;
-		// }
-		if(previous->type <= SEMICOLON && last->type == SEMICOLON)
-		{
-			syntax_error(previous->data);
-			return 0;
-		}
-		previous = last;
+		if (!check_neighbors(previous, cur))
+			return (0);
+		previous = cur;
+		cur = cur->prev;
 	}
-	if(previous->type <= PIPE)
+	if (previous->type <= PIPE)
 	{
 		syntax_error(previous->data);
-		return 0;
+		return (0);
 	}
-	return 1;
+	return (1);
 }
 
 void	check_last_token(t_token **tokens)
@@ -52,4 +61,15 @@ void	check_last_token(t_token **tokens)
 		else
 			clear_tokens_prev(tokens, free);
 	}
+}
+
+char	*create_str(t_token *tokens)
+{
+	char	*str;
+
+	str = malloc(tokens->len + 1);
+	if (!str)
+		error_exit("malloc error");
+	ft_memcpy(str, tokens->data, tokens->len + 1);
+	return (str);
 }
