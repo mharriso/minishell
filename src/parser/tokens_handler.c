@@ -1,8 +1,7 @@
 #include "parser.h"
 #include "exit.h"
 #include "env_func.h"
-
-#include <stdio.h> // delete
+#include "utils.h"
 
 char	*get_env_name(char	**src)
 {
@@ -40,7 +39,6 @@ char	*get_env_value(char **src, t_list **env)
 		if (!value)
 			error_exit("get_env_value");
 	}
-	printf("name = %s value = %s\n", name, value);
 	return (value);
 }
 
@@ -51,7 +49,7 @@ t_str	*create_env_str(char *src, t_list **env)
 	int		part_len;
 
 	dollar = ft_strchr(src, '$');
-	str = malloc(sizeof(str));
+	str = malloc(sizeof(t_str));
 	str->data = ft_strdup("");
 	str->len = 0;
 	while (dollar)
@@ -78,75 +76,63 @@ void	env_handler(t_token *tokens, t_list **env)
 	free(tokens->data);
 	tokens->data = env_str->data;
 	tokens->len = env_str->len;
+	free(env_str);
 }
 
-// static char	*type(int type) //delete
-// {
-// 	if (type == EMPTY)
-// 		return ft_strdup("EMPTY");
-// 	else if (type == TEXT)
-// 		return ft_strdup("TEXT");
-// 	else if (type == PIPE)
-// 		return ft_strdup("PIPE");
-// 	else if (type == SEMICOLON)
-// 		return ft_strdup("SEMICOLON");
-// 	else if (type == OR)
-// 		return ft_strdup("OR");
-// 	else if (type == AND)
-// 		return ft_strdup("AND");
-// 	else if (type & ENV)
-// 		return ft_strdup("ENV");
-// 	else if (type & WILDCARD)
-// 		return ft_strdup("WILDCARD");
-// 	else
-// 		return ft_strdup("ERROR TYPE");
-// }
-
-// static void	print_tokens(t_token *lst)
-// {
-// 	printf("   TOKENS\n");
-// 	while (lst)
-// 	{
-// 		printf("%-11s:  %s\n", type(lst->type), lst->data);
-// 		lst = lst->prev;
-// 	}
-// 	printf("\n\n");
-// }
-
-t_token *example()
+static void	free_tok(t_token *tokens)
 {
-	t_token *wildcard;
+	free(tokens->data);
+	free(tokens);
+}
 
-	wildcard = NULL;
-	start_tokens(&wildcard, 100);
-	for(int i = 0; i < 10; i++)
+static t_token	*wildcard_handler(t_token *tokens, t_token **ret)
+{
+	t_token	*wc_end;
+	t_token	*wc_start;
+	t_token	*tok_end;
+	t_token	*tok_start;
+
+	wc_end = ft_wildcard(tokens->data);
+	if (wc_end)
 	{
-		create_new_token(&wildcard, 2);
-		wildcard->data[0] = i + '0';
-		wildcard->type = TEXT;
-		wildcard->len = 2;
+		tok_start = tokens->next;
+		tok_end = tokens->prev;
+		free_tok(tokens);
+		wc_start = token_last(wc_end);
+		if (ret)
+			*ret = wc_start;
+		if (tok_start)
+			tok_start->prev = wc_start;
+		wc_start->next = tok_start;
+		wc_end->prev = tok_end;
+		if (tok_end)
+			tok_end->next = wc_end;
+		if (tok_end)
+			return (tok_end);
+		return (wc_end);
 	}
-	return (wildcard);
+	return (tokens);
 }
 
-// void	wildcard_handler(t_token *tokens)
-// {
-// 	t_token *wildcard;
-// 	//t_token *wildcard_first;
-
-// 	wildcard = example();
-
-// 	printf("OK\n");
-// }
-
-void	tokens_handler(t_token *tokens, t_list **env)
+void	tokens_handler(t_token **cur, t_list **env, t_token **end)
 {
+	t_token	*tokens;
+
+	tokens = *cur;
+	if (tokens->type & WILDCARD)
+	{
+		if (tokens->type & ENV)
+			env_handler(tokens, env);
+		tokens = wildcard_handler(tokens, cur);
+		*end = *cur;
+		tokens = tokens->prev;
+	}
 	while (tokens && (tokens->type != SEMICOLON))
 	{
 		if (tokens->type & ENV)
 			env_handler(tokens, env);
-		// if (tokens->type & WILDCARD)
-		// 	wildcard_handler(tokens);
+		if (tokens->type & WILDCARD)
+			tokens = wildcard_handler(tokens, NULL);
 		tokens = tokens->prev;
 	}
 }

@@ -4,47 +4,7 @@
 #include "com_func.h"
 #include "exit.h"
 
-
 static unsigned int	g_ret;
-
-char	*type(int type) //delete
-{
-	if (type == EMPTY)
-		return ft_strdup("EMPTY");
-	else if (type == TEXT)
-		return ft_strdup("TEXT");
-	else if (type ==  RED_RIGHT)
-		return ft_strdup("RED_RIGHT");
-	else if (type ==  RED_DRIGHT)
-		return ft_strdup("RED_DRIGHT");
-	else if (type ==  RED_LEFT)
-		return ft_strdup("RED_LEFT");
-	else if (type == PIPE)
-		return ft_strdup("PIPE");
-	else if (type == SEMICOLON)
-		return ft_strdup("SEMICOLON");
-	else if (type == OR)
-		return ft_strdup("OR");
-	else if (type == AND)
-		return ft_strdup("AND");
-	else if (type & ENV)
-		return ft_strdup("ENV");
-	else if (type & WILDCARD)
-		return ft_strdup("WILDCARD");
-	else
-		return ft_strdup("ERROR TYPE");
-}
-
-void	print_tokens(t_token *lst)
-{
-	printf("   TOKENS\n");
-	while (lst)
-	{
-		printf("%-11s:  %s\n", type(lst->type), lst->data);
-		lst = lst->prev;
-	}
-	printf("\n\n");
-}
 
 void	syntax_error(char *str)
 {
@@ -68,16 +28,11 @@ void	tokens_to_commands(t_token **tokens, t_list **env)
 {
 	t_list		*commands;
 	t_token		*end;
-	t_token		*end2;
-
 
 	end = *tokens;
-	end2 = *tokens;
-
 	while (*tokens)
 	{
-		print_tokens(end);
-		tokens_handler(*tokens, env);
+		tokens_handler(tokens, env, &end);
 		commands = create_com_lst(tokens, env);
 		if (commands)
 		{
@@ -85,7 +40,7 @@ void	tokens_to_commands(t_token **tokens, t_list **env)
 			ft_lstclear(&commands, com_clear);
 		}
 	}
-	clear_tokens_prev(&end2, free);
+	clear_tokens_prev(&end, free);
 }
 
 void	add_env_value(t_str *str, char **src, t_list **env)
@@ -110,7 +65,6 @@ void	add_env_value(t_str *str, char **src, t_list **env)
 		ft_memcpy(str->data + str->len, value, value_len);
 		str->len += value_len;
 		free(value);
-
 	}
 }
 

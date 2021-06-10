@@ -27,7 +27,7 @@
 # define DIAMOND "\U0001F538"
 //#define PROMPT SHELL" "DIAMOND BLUE"-msh-"RESET DIAMOND" "
 
-#include "libft.h"
+# include "libft.h"
 
 typedef struct s_line
 {
@@ -65,7 +65,7 @@ t_token	*token_last(t_token *lst);
 void	save_twins(t_token **tokens, t_line *line, char c, int type);
 void	save_one(t_token **tokens, t_line *line, char c, int type);
 void	add_symbol(t_token **tokens, char c, int type);
-void	tokens_handler(t_token *tokens, t_list **env);
+void	tokens_handler(t_token **cur, t_list **env, t_token **end);
 int		run_parser(char *line, t_list	**env);
 void	syntax_error(char *str);
 void	check_last_token(t_token **tokens);
