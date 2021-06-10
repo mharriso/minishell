@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:08:45 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/06 19:40:30 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/10 16:50:10 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@
 #define DOLLAR GREEN"$"RESET
 #define DIAMOND "\U0001F538"
 //#define PROMPT SHELL" "DIAMOND BLUE"-msh-"RESET DIAMOND" "
+
+#include "libft.h"
 
 typedef struct s_line
 {

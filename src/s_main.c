@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 13:32:03 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/06/07 13:45:48 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/10 17:22:07 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include "com_func.h"
 #include "red_func.h"
 #include "ft_term.h"
+#include "parser.h"
 
 // static char	**fill_arg(int argc, char **argv)
 // {
@@ -77,23 +78,43 @@ t_list	*create_cmd()
 	return (lst);
 }
 
+void pr_tok(t_token *tk)
+{
+	while (tk)
+	{
+		printf("|%s|\n", tk->data);
+		tk = tk->next;
+	}
+
+}
+
 void ft_run(int argc, char **argv, char **envp)
 {
 	t_list	*env;
-	t_list	*cmd_list;
+	//t_list	*cmd_list;
+
+	t_token *tk;
 
 	char **a;
 	a = argv;
 
 	env = env_create(envp);
 
-	if (argc >= 1)
+	if (argc == 2)
 	{
-		cmd_list = create_cmd();
-		commands_handler(cmd_list, &env);
-		ft_lstclear(&cmd_list, com_clear);
+		// cmd_list = create_cmd();
+		// commands_handler(cmd_list, &env);
+		// ft_lstclear(&cmd_list, com_clear);
 
 		//ft_term(argv[0], &env);
+
+		tk = ft_wildcard("*.c");
+		if (!tk)
+			printf("null\n");
+		else
+		{
+			pr_tok(tk);
+		}
 	}
 
 	ft_lstclear(&env, env_clear);

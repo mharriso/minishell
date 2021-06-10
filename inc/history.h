@@ -16,8 +16,8 @@ typedef struct s_history
 t_hisory	*history_init(const char *pname, t_list **env);
 char		*history_up_arrow(t_dlist **cur_history);
 char		*history_down_arrow(t_dlist **cur_history, char *cur_line);
-void		history_add(const char *content, t_dlist **history);
-void		history_save(const char *fname, t_dlist *history);
+void		history_add(const char *fname, const char *content, \
+				t_dlist **history);
 void		history_free(t_hisory *history);
 
 #endif

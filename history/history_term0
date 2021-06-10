@@ -1,3 +1,31 @@
+cat
+ls | cat -e | cat -e
+yes | head
+echo 000
+cat
+ls | cat -e | cat -e
+yes | head
+echo q
+echoq
+echo
+asd
+cat
+asd
+cat
+man ascii
+cat
+echo hi!
+exit
+exiy
+cat
+ls | cat -e | cat -e
+yes | head
+pwd
+asd
+echo hello
+4
+2
+1
 ./minishell
 hi
 echo hello

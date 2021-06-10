@@ -6,12 +6,13 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/18 16:27:46 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/06/06 20:08:24 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/10 16:04:21 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "buildin.h"
 #include "libft.h"
+#include "exit.h"
 
 static char	*ft_absname(char *arg)
 {
@@ -21,6 +22,8 @@ static char	*ft_absname(char *arg)
 
 	len = ft_strlen(arg);
 	name = malloc(len + 1);
+	if (!name)
+		error_exit("ft_absname");
 	i = 0;
 	while (i < len)
 	{
@@ -35,21 +38,24 @@ static char	*ft_absname(char *arg)
 int	ft_runbuildin(char **argv, t_list **env)
 {
 	char	*name;
+	int		res;
 
+	res = -1;
 	name = ft_absname(argv[0]);
 	if (!ft_strcmp("cd", name))
-		return (ft_cd(argv + 1, env));
+		res = ft_cd(argv + 1, env);
 	else if (!ft_strcmp("echo", name))
-		return (ft_echo(argv + 1));
+		res = ft_echo(argv + 1);
 	else if (!ft_strcmp("env", name))
-		return (ft_env(*env));
+		res = ft_env(*env);
 	else if (!ft_strcmp("exit", name))
 		ft_exit(argv + 1);
 	else if (!ft_strcmp("export", name))
-		return (ft_export(argv + 1, env));
+		res = ft_export(argv + 1, env);
 	else if (!ft_strcmp("pwd", name))
-		return (ft_pwd());
+		res = ft_pwd();
 	else if (!ft_strcmp("unset", name))
-		return (ft_unset(argv + 1, env));
-	return (-1);
+		res = ft_unset(argv + 1, env);
+	free(name);
+	return (res);
 }
