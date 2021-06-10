@@ -6,18 +6,18 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 14:17:59 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/24 23:36:45 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/07 19:30:39 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static	int		ft_isspace(int c)
+static	int	ft_isspace(int c)
 {
 	return (c == ' ' || (c >= '\t' && c <= '\r'));
 }
 
-int				ft_atoi(char *str)
+int	ft_atoi(char *str)
 {
 	long		number;
 	int			sign;

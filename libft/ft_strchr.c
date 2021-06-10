@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 17:50:10 by mharriso          #+#    #+#             */
-/*   Updated: 2020/11/05 02:58:47 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/07 19:59:33 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,7 @@ char	*ft_strchr(const char *str, int c)
 {
 	while (*str != c && *str)
 		str++;
-	return ((*str == c) ? (char *)str : 0);
+	if (*str == c)
+		return ((char *)str);
+	return (0);
 }

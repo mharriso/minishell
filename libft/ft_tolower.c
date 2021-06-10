@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 18:38:43 by mharriso          #+#    #+#             */
-/*   Updated: 2020/11/05 03:03:50 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/07 19:56:59 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int		ft_tolower(int c)
+int	ft_tolower(int c)
 {
 	if (c >= 'A' && c <= 'Z')
 		c = c - 'A' + 'a';

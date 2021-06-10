@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 18:38:54 by mharriso          #+#    #+#             */
-/*   Updated: 2020/11/05 03:03:59 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/07 19:57:06 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int		ft_toupper(int c)
+int	ft_toupper(int c)
 {
 	if (c >= 'a' && c <= 'z')
 		c = c - 'a' + 'A';

@@ -3,17 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstremove.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 16:19:57 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/05/16 17:06:58 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/07 20:06:28 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "struct.h"
 
-// Content - a node with which to delete, size - size in byte to cpm content, del - func to free node
+// Content - a node with which to delete,
+// Size - size in byte to cpm content, del - func to free node
 int	ft_lstremove(t_list **list, void *content, size_t size, void (*del)(void*))
 {
 	t_list	*temp;

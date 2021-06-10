@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 01:34:10 by mharriso          #+#    #+#             */
-/*   Updated: 2021/05/16 17:40:26 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/07 21:04:35 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void			ft_putnbr_fd(int n, int fd);
 ********************************BONUS PART********************************* *
 */
 
-typedef struct	s_list
+typedef struct s_list
 {
 	void			*content;
 	struct s_list	*next;
@@ -79,10 +79,10 @@ t_list			*ft_lstlast(t_list *lst);
 void			ft_lstdelone(t_list *lst, void (*del)(void*));
 void			ft_lstclear(t_list **lst, void (*del)(void *));
 t_list			*ft_lstmap(t_list *lst, void *(*f)(void *),
-void (*del)(void *));
+					void (*del)(void *));
 void			ft_lstiter(t_list *lst, void (*f)(void *));
 int				ft_lstremove(t_list **list, void *content, size_t size,
-void (*del)(void*));
+					void (*del)(void*));
 int				get_next_line(int fd, char **line);
 char			**ft_split_set(char const *s, char *set, size_t *len);
 int				ft_strcmp(const char *s1, const char *s2);
