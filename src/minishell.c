@@ -2,6 +2,7 @@
 #include "exit.h"
 #include "ft_term.h"
 #include <stdio.h>
+#include <locale.h>
 
 static void	ms_run(int argc, char **argv, char **envp)
 {
@@ -22,6 +23,8 @@ static void	ms_run(int argc, char **argv, char **envp)
 
 int	main(int argc, char **argv, char **envp)
 {
+	//setlocale(LC_ALL, "Russian");
 	ms_run(argc, argv, envp);
+	sleep(20);
 	return (0);
 }
