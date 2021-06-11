@@ -91,9 +91,10 @@ void	history_add(const char *fname, const char *content, t_dlist **history)
 {
 	t_dlist	*node;
 
-	if (!history || !*history || !(*history)->content || !content)
+	if (!history || !content)
 		return ;
-	if (!ft_strcmp((*history)->content, content))
+	if (*history && (*history)->content \
+		&& !ft_strcmp((*history)->content, content))
 		return ;
 	node = ft_dlstnew(ft_strdup(content));
 	if (!node)

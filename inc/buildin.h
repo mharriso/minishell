@@ -1,9 +1,9 @@
 #ifndef BUILDIN_H
 # define BUILDIN_H
 
-# define PWD_BUFF 256
-
 # include "libft.h"
+
+# define PWD_BUFF 256
 
 int		ft_echo(char **argv);
 int		ft_pwd(void);

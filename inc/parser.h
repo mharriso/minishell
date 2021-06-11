@@ -27,7 +27,6 @@
 # define DIAMOND "\U0001F538"
 //#define PROMPT SHELL" "DIAMOND BLUE"-msh-"RESET DIAMOND" "
 
-# include "libft.h"
 typedef struct s_line
 {
 	char	**data;

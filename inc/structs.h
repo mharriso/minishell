@@ -6,12 +6,14 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 13:10:09 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/06/06 14:54:03 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/11 14:34:04 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCTS_H
 # define STRUCTS_H
+
+# include <unistd.h>
 
 # define RED_LEFT 1
 # define RED_RIGHT 2
@@ -19,8 +21,6 @@
 
 # define PIPE_IN 1
 # define PIPE_OUT 2
-
-# include <unistd.h>
 
 typedef struct s_fdi
 {

@@ -57,9 +57,12 @@ static void	find_files(const char *wc, DIR *dp, t_token **tk)
 	ep = readdir(dp);
 	while (ep)
 	{
-		res = wc_check(wc, ep->d_name);
-		if (res)
-			tok_add(tk, ep->d_name);
+		if (*(ep->d_name) != '.')
+		{
+			res = wc_check(wc, ep->d_name);
+			if (res)
+				tok_add(tk, ep->d_name);
+		}
 		ep = readdir(dp);
 	}
 }
