@@ -8,17 +8,6 @@
 #include "red_func.h"
 #include "structs.h"
 
-char	*create_str(t_token *tokens)
-{
-	char	*str;
-
-	str = malloc(tokens->len + 1);
-	if (!str)
-		error_exit("malloc error");
-	ft_memcpy(str, tokens->data, tokens->len + 1);
-	return (str);
-}
-
 void	init_cmd(t_command **cmd)
 {
 	*cmd = malloc(sizeof(t_command));
@@ -48,9 +37,6 @@ void	fill_arrays(t_command *cmd, t_token **tokens)
 		}
 		*tokens = (*tokens)->prev;
 	}
-	// printf("\nCOMMANDS ARRAY\n");
-	// for (size_t k = 0; cmd->com[k]; k++) // delete !!!
-	// 	printf("%s\n", cmd->com[k]);
 }
 
 void	alloc_arrays(t_command *cmd, t_token *tokens)
@@ -70,7 +56,6 @@ void	alloc_arrays(t_command *cmd, t_token *tokens)
 			c_size++;
 		temp = temp->prev;
 	}
-	//printf("COM_SIZE = %d\nRED_SIZE = %d\n", c_size, r_size);
 	if (r_size)
 	{
 		cmd->red = malloc(sizeof(t_redir) * (r_size + 1));

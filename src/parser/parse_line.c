@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 20:47:57 by mharriso          #+#    #+#             */
-/*   Updated: 2021/06/10 00:19:37 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/06/10 23:11:15 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "structs.h"
 #include "ft_term.h"
 
-void	parse_redirect(t_token **tokens, t_line *line, char c)
+static	void	parse_redirect(t_token **tokens, t_line *line, char c)
 {
 	if (c == '<')
 		save_one(tokens, line, c, RED_LEFT);
@@ -30,7 +30,7 @@ void	parse_redirect(t_token **tokens, t_line *line, char c)
 		save_one(tokens, line, c, RED_RIGHT);
 }
 
-void	parse_normal(t_token **tokens, t_line *line, char c)
+static	void	parse_normal(t_token **tokens, t_line *line, char c)
 {
 	if (c == '\"')
 		line->status = IN_DQUOTES;
@@ -58,7 +58,7 @@ void	parse_normal(t_token **tokens, t_line *line, char c)
 		add_symbol(tokens, c, TEXT);
 }
 
-void	parse_in_dquotes(t_token **tokens, t_line *line, char c)
+static	void	parse_in_dquotes(t_token **tokens, t_line *line, char c)
 {
 	if (c == '\"')
 		line->status = NORMAL;
@@ -76,7 +76,7 @@ void	parse_in_dquotes(t_token **tokens, t_line *line, char c)
 		add_symbol(tokens, c, TEXT);
 }
 
-void	parse_in_quotes(t_token **tokens, t_line *line, char c)
+static	void	parse_in_quotes(t_token **tokens, t_line *line, char c)
 {
 	if (c == '\'')
 		line->status = NORMAL;
