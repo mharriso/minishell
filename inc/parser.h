@@ -17,16 +17,6 @@
 # define WILDCARD 32
 # define WORD 56
 
-# define BLUE "\033[34;1m"
-# define YELLOW  "\033[33m"
-# define GREEN   "\033[32m"
-# define RESET   "\033[0m"
-# define ARROW "\U000027A1"
-# define SHELL "\U0001F41A"
-# define CROSS "\U0000274E"
-# define DIAMOND "\U0001F538"
-//#define PROMPT SHELL" "DIAMOND BLUE"-msh-"RESET DIAMOND" "
-
 typedef struct s_line
 {
 	char	**data;
@@ -70,7 +60,6 @@ void	syntax_error(char *str);
 void	check_last_token(t_token **tokens);
 void	add_env_value(t_str *str, char **src, t_list **env);
 char	*get_env_value(char **src, t_list **env);
-t_list	*create_com_lst(t_token **tokens, t_list **env);
 t_list	*create_com_lst(t_token **tokens, t_list **env);
 char	*create_str(t_token *tokens);
 

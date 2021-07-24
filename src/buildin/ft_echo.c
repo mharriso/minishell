@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 19:53:05 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/06/05 17:22:27 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/07/24 19:45:58 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	ft_echo(char **argv)
 
 	n = 0;
 	i = 0;
-	while (argv[i] && argv[i][0] == '-' && argv[i][1] == 'n')
+	while (argv[i] && !ft_strcmp(argv[i], "-n"))
 	{
 		n++;
 		i++;
@@ -30,8 +30,8 @@ int	ft_echo(char **argv)
 	while (argv[i])
 	{
 		if (i != t)
-			printf(" ");
-		printf("%s", argv[i]);
+			ft_putstr_fd(" ", 1);
+		ft_putstr_fd(argv[i], 1);
 		i++;
 	}
 	if (!n)

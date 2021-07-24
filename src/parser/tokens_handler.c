@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "exit.h"
 #include "env_func.h"
+
 static void	free_tok(t_token *tokens)
 {
 	free(tokens->data);

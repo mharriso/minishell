@@ -8,7 +8,7 @@
 #include "red_func.h"
 #include "structs.h"
 
-void	init_cmd(t_command **cmd)
+static void	init_cmd(t_command **cmd)
 {
 	*cmd = malloc(sizeof(t_command));
 	if (!*cmd)
@@ -16,7 +16,7 @@ void	init_cmd(t_command **cmd)
 	ft_memset(*cmd, 0, sizeof(t_command));
 }
 
-void	fill_arrays(t_command *cmd, t_token **tokens)
+static void	fill_arrays(t_command *cmd, t_token **tokens)
 {
 	int		i;
 	int		j;
@@ -39,7 +39,7 @@ void	fill_arrays(t_command *cmd, t_token **tokens)
 	}
 }
 
-void	alloc_arrays(t_command *cmd, t_token *tokens)
+static void	alloc_arrays(t_command *cmd, t_token *tokens)
 {
 	t_token		*temp;
 	int			c_size;
@@ -66,7 +66,7 @@ void	alloc_arrays(t_command *cmd, t_token *tokens)
 	cmd->com[c_size] = NULL;
 }
 
-void	set_pipe(t_command *cmd, t_token *tokens)
+static void	set_pipe(t_command *cmd, t_token *tokens)
 {
 	static int	type;
 
@@ -95,13 +95,10 @@ t_list	*create_com_lst(t_token **tokens, t_list **env)
 		set_pipe(cmd, *tokens);
 		node = ft_lstnew(cmd);
 		ft_lstadd_back(&commands, node);
-		if (*tokens)
+		if (*tokens && (*tokens)->type == PIPE)
 			*tokens = (*tokens)->prev;
 	}
 	if (*tokens && ((*tokens)->type == SEMICOLON))
-	{
 		*tokens = (*tokens)->prev;
-		clear_tokens_next(&((*tokens)->next), free);
-	}
 	return (commands);
 }

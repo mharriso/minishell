@@ -6,7 +6,7 @@
 /*   By: tjuliean <tjuliean@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/17 19:17:05 by tjuliean          #+#    #+#             */
-/*   Updated: 2021/06/05 18:46:37 by tjuliean         ###   ########.fr       */
+/*   Updated: 2021/06/11 16:47:26 by tjuliean         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ static int	cd_error_handler(char *str)
 
 	res = stat(str, &buf);
 	if (res)
-		printf("cd: %s: No such file or directory", str);
+		printf("cd: %s: No such file or directory\n", str);
 	else
-		printf("cd: %s: Not a directory", str);
+		printf("cd: %s: Not a directory\n", str);
 	return (1);
 }
 
@@ -49,8 +49,11 @@ int	ft_cd(char **argv, t_list **env)
 	{
 		new_path = getcwd(NULL, PWD_BUFF);
 		value = env_getvaluebyname("PWD", *env);
-		env_replace("OLDPWD", value, env);
-		env_replace("PWD", new_path, env);
+		if (value)
+		{
+			env_replace("OLDPWD", value, env);
+			env_replace("PWD", new_path, env);
+		}
 	}
 	return (0);
 }
