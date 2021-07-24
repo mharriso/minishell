@@ -56,3 +56,4 @@ dkms.conf
 #VSCode files
 launch.json
 *.json
+.DS_Store
